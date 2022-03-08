@@ -1,6 +1,8 @@
 package com.project.recruit_and_employ.pojo;
 
 import io.swagger.annotations.ApiModel;
+
+import java.math.BigDecimal;
 import java.time.*;
 import lombok.Data;
 import java.io.Serializable;
