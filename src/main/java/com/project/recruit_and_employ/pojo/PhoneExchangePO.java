@@ -1,5 +1,7 @@
 package com.project.recruit_and_employ.pojo;
 
+import io.swagger.annotations.ApiModel;
+import java.time.*;
 import lombok.Data;
 import java.io.Serializable;
 import com.baomidou.mybatisplus.annotation.*;
@@ -28,7 +30,7 @@ public class PhoneExchangePO implements Serializable {
      * 发送者的电话
      */
     @ApiModelProperty(value = "发送者的电话")
-    private String senderPhone;
+    private Long senderPhone;
     /**
      * 电话接收者id
      */
@@ -38,6 +40,6 @@ public class PhoneExchangePO implements Serializable {
      * 接收者电话
      */
     @ApiModelProperty(value = "接收者电话")
-    private String recipientPhone;
+    private Long recipientPhone;
     
 }

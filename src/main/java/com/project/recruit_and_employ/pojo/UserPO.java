@@ -1,5 +1,7 @@
 package com.project.recruit_and_employ.pojo;
 
+import io.swagger.annotations.ApiModel;
+import java.time.*;
 import lombok.Data;
 import java.io.Serializable;
 import com.baomidou.mybatisplus.annotation.*;
@@ -56,6 +58,6 @@ public class UserPO implements Serializable {
      * 电话号码
      */
     @ApiModelProperty(value = "电话号码")
-    private Integer phoneNum;
+    private Long phoneNum;
     
 }
