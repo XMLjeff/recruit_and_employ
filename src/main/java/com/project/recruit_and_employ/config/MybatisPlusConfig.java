@@ -1,4 +1,4 @@
-package com.project.online_examination.config;
+package com.project.recruit_and_employ.config;
 
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParserCountOptimize;

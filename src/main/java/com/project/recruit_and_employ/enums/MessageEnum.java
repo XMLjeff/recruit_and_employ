@@ -1,7 +1,7 @@
-package com.project.online_examination.enums;
+package com.project.recruit_and_employ.enums;
 
-import com.project.online_examination.constant.Constant;
-import com.project.online_examination.constant.UserConstant;
+
+import com.project.recruit_and_employ.constant.Constant;
 
 /**
  * @author ：xmljeff
@@ -22,7 +22,6 @@ public enum MessageEnum {
     QUESTION_EXIST(1007, "试题已存在"),
     PASSWORD_CANT_NULL(1008, "密码不能为空"),
     USERNAME_NOT_EXIST(1009, "用户不存在"),
-    DEFAULT_PASSWORD(1010, "重置成功,重置之后的密码是" + UserConstant.DEFAULT_PASSWORD),
     FILE_EXCEPTION(1011, Constant.FILE_EXCEPTION),
 
 

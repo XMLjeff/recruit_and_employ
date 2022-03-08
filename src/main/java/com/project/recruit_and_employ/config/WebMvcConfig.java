@@ -1,4 +1,4 @@
-package com.project.online_examination.config;
+package com.project.recruit_and_employ.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

@@ -1,4 +1,4 @@
-package com.project.online_examination.constant;
+package com.project.recruit_and_employ.constant;
 
 /**
  * @author ：xmljeff

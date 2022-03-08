@@ -1,14 +1,10 @@
-package com.project.online_examination.utils;
+package com.project.recruit_and_employ.utils;
 
-import com.project.online_examination.constant.Constant;
-import com.project.online_examination.enums.MessageEnum;
-import com.project.online_examination.vo.ResultVO;
+import com.project.recruit_and_employ.constant.Constant;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
