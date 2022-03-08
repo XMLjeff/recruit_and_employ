@@ -10,10 +10,10 @@
     </parent>
 
     <groupId>com.project</groupId>
-    <artifactId>online_examination</artifactId>
+    <artifactId>recruit_and_employ</artifactId>
     <version>1.0.0</version>
-    <name>online_examination</name>
-    <description>网上考试系统</description>
+    <name>recruit_and_employ</name>
+    <description>招聘系统</description>
 
     <properties>
         <java.version>1.8</java.version>
