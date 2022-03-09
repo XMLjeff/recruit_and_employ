@@ -1,9 +1,13 @@
 package com.project.recruit_and_employ.pojo;
 
 import io.swagger.annotations.ApiModel;
+
 import java.time.*;
+
 import lombok.Data;
+
 import java.io.Serializable;
+
 import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -21,7 +25,7 @@ import io.swagger.annotations.ApiModelProperty;
 public class MessagePO implements Serializable {
     private static final Long serialVersionUID = 1L;
 
-/**
+    /**
      * 留言发送者
      */
     @ApiModelProperty(value = "留言发送者")
@@ -36,5 +40,10 @@ public class MessagePO implements Serializable {
      */
     @ApiModelProperty(value = "留言信息")
     private String message;
-    
+    /**
+     * 创建时间
+     */
+    @ApiModelProperty(value = "创建时间")
+    private LocalDateTime createTime;
+
 }

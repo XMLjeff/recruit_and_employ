@@ -2,6 +2,7 @@ package com.project.recruit_and_employ.enums;
 
 
 import com.project.recruit_and_employ.constant.Constant;
+import com.project.recruit_and_employ.constant.UserConstant;
 
 /**
  * @author ：xmljeff
@@ -22,7 +23,9 @@ public enum MessageEnum {
     QUESTION_EXIST(1007, "试题已存在"),
     PASSWORD_CANT_NULL(1008, "密码不能为空"),
     USERNAME_NOT_EXIST(1009, "用户不存在"),
+    DEFAULT_PASSWORD(1010, "重置成功,重置之后的密码是" + UserConstant.DEFAULT_PASSWORD),
     FILE_EXCEPTION(1011, Constant.FILE_EXCEPTION),
+    ROLE_ERROR(1012, "角色错误"),
 
 
     ERROR(2000, "内部服务器错误。");

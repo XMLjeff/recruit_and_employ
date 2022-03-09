@@ -1,30 +1,20 @@
-package com.project.recruit_and_employ.pojo;
+package com.project.recruit_and_employ.dto;
 
-import io.swagger.annotations.ApiModel;
-
-import java.math.BigDecimal;
-import java.time.*;
-
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
-
-import com.baomidou.mybatisplus.annotation.*;
-import io.swagger.annotations.ApiModelProperty;
+import java.math.BigDecimal;
 
 /**
- * <p>
- * 求职者
- * </p>
- *
- * @author xmljeff
- * @since 2022-03-08
+ * @author ：xmljeff
+ * @date ：Created in 2022/3/9 20:09
+ * @description：求职者DTO
+ * @modified By：
+ * @version: $
  */
-
-@TableName("job_seekers")
 @Data
-public class JobSeekersPO implements Serializable {
-    private static final Long serialVersionUID = 1L;
+public class JobSeekersDTO implements Serializable {
 
     /**
      * 用户id（主键）
@@ -62,4 +52,9 @@ public class JobSeekersPO implements Serializable {
     @ApiModelProperty(value = "简历url")
     private String resumeUrl;
 
+    @ApiModelProperty(value = "页码", example = "1", notes = "必填")
+    private Long pageNum;
+
+    @ApiModelProperty(value = "每页条数", example = "10", notes = "必填")
+    private Long pageSize;
 }

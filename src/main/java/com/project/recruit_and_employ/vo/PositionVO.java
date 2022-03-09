@@ -1,39 +1,20 @@
-package com.project.recruit_and_employ.pojo;
+package com.project.recruit_and_employ.vo;
 
-import io.swagger.annotations.ApiModel;
-
-import java.math.BigDecimal;
-import java.time.*;
-
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.io.Serializable;
-
-import com.baomidou.mybatisplus.annotation.*;
-import io.swagger.annotations.ApiModelProperty;
+import java.math.BigDecimal;
 
 /**
- * <p>
- * 岗位表
- * </p>
- *
- * @author xmljeff
- * @since 2022-03-08
+ * @author ：xmljeff
+ * @date ：Created in 2022/3/9 21:22
+ * @description：
+ * @modified By：
+ * @version: $
  */
-
-@TableName("position")
 @Data
-public class PositionPO implements Serializable {
-    private static final Long serialVersionUID = 1L;
+public class PositionVO {
 
-    /**
-     * 岗位id
-     */
-    @ApiModelProperty(value = "岗位id")
-    //@TableId(value = "position_id", type = IdType.ID_WORKER)
-    //private Long id;//如果是Long类型的主键.则需要IdType.ID_WORKER;它会自动使用雪花算法生成不重复的ID.在新增的时候.自动赋值
-    @TableId(type = IdType.AUTO)
-    private Long positionId;
     /**
      * 岗位名称
      */
@@ -45,10 +26,15 @@ public class PositionPO implements Serializable {
     @ApiModelProperty(value = "岗位类别（1表示校招；2表示社招）")
     private Integer positionCategory;
     /**
-     * 公司id
+     * 公司名称
      */
-    @ApiModelProperty(value = "公司id")
-    private Long companyId;
+    @ApiModelProperty(value = "公司名称")
+    private String companyName;
+    /**
+     * 公司详情
+     */
+    @ApiModelProperty(value = "公司详情")
+    private String companyDetail;
     /**
      * 岗位薪资
      */
@@ -74,5 +60,14 @@ public class PositionPO implements Serializable {
      */
     @ApiModelProperty(value = "招聘人的id")
     private Long userId;
-
+    /**
+     * 昵称
+     */
+    @ApiModelProperty(value = "昵称")
+    private String nickName;
+    /**
+     * 性别：0：男；1：女，2：未知
+     */
+    @ApiModelProperty(value = "性别：0：男；1：女，2：未知")
+    private Integer sex;
 }

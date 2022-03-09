@@ -1,37 +1,28 @@
-package com.project.recruit_and_employ.pojo;
+package com.project.recruit_and_employ.dto;
 
-import io.swagger.annotations.ApiModel;
-
-import java.time.*;
-
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
-
-import com.baomidou.mybatisplus.annotation.*;
-import io.swagger.annotations.ApiModelProperty;
+import java.util.List;
 
 /**
- * <p>
- * 用户表
- * </p>
- *
- * @author xmljeff
- * @since 2022-03-08
+ * @author ：xmljeff
+ * @date ：Created in 2022/1/16 19:06
+ * @description：用户DTO
+ * @modified By：
+ * @version: $
  */
-
-@TableName("user")
 @Data
-public class UserPO implements Serializable {
-    private static final Long serialVersionUID = 1L;
+public class UserDTO implements Serializable {
+
 
     /**
      * 用户id
      */
     @ApiModelProperty(value = "用户id")
-    //@TableId(value = "user_id", type = IdType.ID_WORKER)
-    //private Long id;//如果是Long类型的主键.则需要IdType.ID_WORKER;它会自动使用雪花算法生成不重复的ID.在新增的时候.自动赋值
-    @TableId(type = IdType.AUTO)
     private Long userId;
     /**
      * 用户名
@@ -63,5 +54,4 @@ public class UserPO implements Serializable {
      */
     @ApiModelProperty(value = "电话号码")
     private Long phoneNum;
-
 }
