@@ -39,6 +39,8 @@ public class UserLoginController {
     private IUserService userService;
     @Autowired
     private ICompanyService companyService;
+    @Autowired
+    private ICompanyUserService companyUserService;
 
     @ApiOperation(value = "用户注册")
     @PostMapping("register")
@@ -72,6 +74,7 @@ public class UserLoginController {
             CompanyUserPO companyUserPO = new CompanyUserPO();
             companyUserPO.setCompanyId(companyPO.getCompanyId());
             companyUserPO.setUserId(userPO.getUserId());
+            companyUserService.save(companyUserPO);
         }
 
         return ResultVO.ok();
