@@ -65,11 +65,6 @@ public class PositionPO implements Serializable {
     @ApiModelProperty(value = "工作地点")
     private String placeOfWork;
     /**
-     * 是否停止招聘（0表示停止招聘，1表示正在招聘）
-     */
-    @ApiModelProperty(value = "是否停止招聘（0表示停止招聘，1表示正在招聘）")
-    private Integer recruitFlag;
-    /**
      * 招聘人的id
      */
     @ApiModelProperty(value = "招聘人的id")

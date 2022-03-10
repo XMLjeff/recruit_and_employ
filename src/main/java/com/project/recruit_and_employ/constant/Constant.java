@@ -33,7 +33,9 @@ public class Constant {
     /**
      * 文件存储路径
      */
-    public static final String BASE_DIR = "D:/onlineExam";
+    public static final String BASE_DIR = "D:/recruitAndEmploy";
 
     public static final String FILE_EXCEPTION = "文件类型异常";
+
+    public static final String SUCCESS = "成功";
 }

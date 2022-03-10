@@ -1,5 +1,7 @@
 package com.project.recruit_and_employ.vo;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -15,6 +17,11 @@ import java.math.BigDecimal;
 @Data
 public class PositionVO {
 
+    /**
+     * 岗位id
+     */
+    @ApiModelProperty(value = "岗位id")
+    private Long positionId;
     /**
      * 岗位名称
      */
@@ -50,11 +57,6 @@ public class PositionVO {
      */
     @ApiModelProperty(value = "工作地点")
     private String placeOfWork;
-    /**
-     * 是否停止招聘（0表示停止招聘，1表示正在招聘）
-     */
-    @ApiModelProperty(value = "是否停止招聘（0表示停止招聘，1表示正在招聘）")
-    private Integer recruitFlag;
     /**
      * 招聘人的id
      */

@@ -27,19 +27,14 @@ public class PhoneExchangePO implements Serializable {
     @ApiModelProperty(value = "电话发送者id")
     private Long senderId;
     /**
-     * 发送者的电话
+     * 电话
      */
-    @ApiModelProperty(value = "发送者的电话")
-    private Long senderPhone;
+    @ApiModelProperty(value = "电话")
+    private Long phone;
     /**
      * 电话接收者id
      */
     @ApiModelProperty(value = "电话接收者id")
     private Long recipientId;
-    /**
-     * 接收者电话
-     */
-    @ApiModelProperty(value = "接收者电话")
-    private Long recipientPhone;
     
 }

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.recruit_and_employ.mapper.UserMapper">
+
+
+    <select id="getJobSeekersInfo" resultType="com.project.recruit_and_employ.vo.MaJobSeekersVO">
+        SELECT
+        u.user_id,
+        u.user_name,
+        u.nick_name,
+        u.sex,
+        u.phone_num,
+        j.intended_position,
+        j.intended_place_of_work,
+        j.salary_expectation,
+        j.scholarship_info,
+        j.introduction,
+        j.resume_url
+        FROM
+        USER u,
+        job_seekers j
+        <where>
+            u.role = 2
+            <if test="nickName != null and nickName != ''">
+                and u.nick_name like concat('%', #{nickName,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="sex != null">
+                and u.sex = #{sex}
+            </if>
+            <if test="intendedPosition != null and intendedPosition != ''">
+                and j.intended_position like concat('%', #{intendedPosition,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="intendedPlaceOfWork != null and intendedPlaceOfWork != ''">
+                and j.intended_place_of_work like concat('%', #{intendedPlaceOfWork,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="salaryExpectation != null">
+                and j.salary_expectation <![CDATA[ >= ]]> #{salaryExpectation}
+            </if>
+            <if test="salaryExpectation != null">
+                and j.salary_expectation <![CDATA[ <= ]]> #{salaryExpectation} + 2000
+            </if>
+        </where>
+
+    </select>
+
+
+</mapper>

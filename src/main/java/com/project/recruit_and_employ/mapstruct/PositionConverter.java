@@ -1,5 +1,6 @@
 package com.project.recruit_and_employ.mapstruct;
 
+import com.project.recruit_and_employ.dto.PositionDTO;
 import com.project.recruit_and_employ.pojo.PositionPO;
 import com.project.recruit_and_employ.vo.PositionVO;
 import org.apache.ibatis.annotations.Mapper;
@@ -17,5 +18,8 @@ public interface PositionConverter {
     PositionVO convertToVO(PositionPO po);
 
     @Mappings({})
-    List<PositionVO> converToVO(List<PositionPO> pos);
+    List<PositionVO> convertToVO(List<PositionPO> pos);
+
+    @Mappings({})
+    PositionPO convertToPO(PositionDTO dto);
 }

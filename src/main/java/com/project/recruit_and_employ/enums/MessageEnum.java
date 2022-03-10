@@ -17,14 +17,10 @@ public enum MessageEnum {
     ACCOUNT_PASSWORD_WRONG(1001, "账号或密码错误"),
     USER_EXIST(1002, "用户已存在"),
     USER_NOT_EXIST(1003, "用户不存在，请先注册"),
-    MAJOR_EXIST(1004, "专业已存在"),
-    COURSE_EXIST(1005, "课程已存在"),
-    PAPER_EXIST(1006, "试卷已存在"),
-    QUESTION_EXIST(1007, "试题已存在"),
     PASSWORD_CANT_NULL(1008, "密码不能为空"),
     USERNAME_NOT_EXIST(1009, "用户不存在"),
     DEFAULT_PASSWORD(1010, "重置成功,重置之后的密码是" + UserConstant.DEFAULT_PASSWORD),
-    FILE_EXCEPTION(1011, Constant.FILE_EXCEPTION),
+    FILE_FAIL(1011, "文件上传失败"),
     ROLE_ERROR(1012, "角色错误"),
 
 

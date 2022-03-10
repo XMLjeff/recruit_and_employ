@@ -1,9 +1,12 @@
 package com.project.recruit_and_employ.dto;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * @author ：xmljeff
@@ -15,6 +18,21 @@ import java.math.BigDecimal;
 @Data
 public class PositionDTO {
 
+    /**
+     * 岗位ids
+     */
+    @ApiModelProperty(value = "岗位ids")
+    private List<Long> positionIds;
+    /**
+     * 岗位id
+     */
+    @ApiModelProperty(value = "岗位id")
+    private Long positionId;
+    /**
+     * 招聘人的id
+     */
+    @ApiModelProperty(value = "招聘人的id")
+    private Long userId;
     /**
      * 岗位名称
      */
@@ -42,8 +60,8 @@ public class PositionDTO {
     private String placeOfWork;
 
     @ApiModelProperty(value = "页码", example = "1", notes = "必填")
-    private Long pageNum;
+    private Integer pageNum;
 
     @ApiModelProperty(value = "每页条数", example = "10", notes = "必填")
-    private Long pageSize;
+    private Integer pageSize;
 }

@@ -44,7 +44,7 @@ public class UploadFile {
         file.transferTo(desc);
         //得到虚拟路径名
         String pathFileName = getPathFileName(Constant.PATH, fileName);
-        map.put("msg", "成功");
+        map.put("msg", Constant.SUCCESS);
         map.put("path", pathFileName);
         map.put("localPath", baseDir + "/" + fileName);
         return map;

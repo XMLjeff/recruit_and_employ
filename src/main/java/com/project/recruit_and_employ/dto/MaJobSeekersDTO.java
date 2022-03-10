@@ -1,22 +1,20 @@
 package com.project.recruit_and_employ.dto;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
  * @author ：xmljeff
- * @date ：Created in 2022/1/16 19:06
- * @description：用户DTO
+ * @date ：Created in 2022/3/10 21:54
+ * @description：
  * @modified By：
  * @version: $
  */
 @Data
-public class UserDTO implements Serializable {
+public class MaJobSeekersDTO {
 
     /**
      * 用户ids
@@ -34,11 +32,6 @@ public class UserDTO implements Serializable {
     @ApiModelProperty(value = "用户名")
     private String userName;
     /**
-     * 密码
-     */
-    @ApiModelProperty(value = "密码")
-    private String password;
-    /**
      * 昵称
      */
     @ApiModelProperty(value = "昵称")
@@ -49,25 +42,40 @@ public class UserDTO implements Serializable {
     @ApiModelProperty(value = "性别：0：男；1：女，2：未知")
     private Integer sex;
     /**
-     * 角色：0：超级管理员；1：管理员；2：求职者；3：公司
-     */
-    @ApiModelProperty(value = "角色：0：超级管理员；1：管理员；2：求职者；3：公司")
-    private Integer role;
-    /**
      * 电话号码
      */
     @ApiModelProperty(value = "电话号码")
     private Long phoneNum;
     /**
-     * 公司名称
+     * 意向岗位
      */
-    @ApiModelProperty(value = "公司名称,当角色为公司时，需选择或填写")
-    private String companyName;
+    @ApiModelProperty(value = "意向岗位")
+    private String intendedPosition;
     /**
-     * 公司详情
+     * 意向工作地点
      */
-    @ApiModelProperty(value = "公司详情，当角色为公司时，需选择或填写")
-    private String companyDetail;
+    @ApiModelProperty(value = "意向工作地点")
+    private String intendedPlaceOfWork;
+    /**
+     * 期望薪资
+     */
+    @ApiModelProperty(value = "期望薪资")
+    private BigDecimal salaryExpectation;
+    /**
+     * 奖学金信息
+     */
+    @ApiModelProperty(value = "奖学金信息")
+    private String scholarshipInfo;
+    /**
+     * 个人介绍
+     */
+    @ApiModelProperty(value = "个人介绍")
+    private String introduction;
+    /**
+     * 简历url
+     */
+    @ApiModelProperty(value = "简历url")
+    private String resumeUrl;
 
     @ApiModelProperty(value = "页码", example = "1", notes = "必填")
     private Integer pageNum;

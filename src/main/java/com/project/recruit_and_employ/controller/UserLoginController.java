@@ -6,7 +6,11 @@ import com.project.recruit_and_employ.constant.UserConstant;
 import com.project.recruit_and_employ.dto.UserDTO;
 import com.project.recruit_and_employ.enums.MessageEnum;
 import com.project.recruit_and_employ.mapstruct.UserConverter;
+import com.project.recruit_and_employ.pojo.CompanyPO;
+import com.project.recruit_and_employ.pojo.CompanyUserPO;
 import com.project.recruit_and_employ.pojo.UserPO;
+import com.project.recruit_and_employ.service.ICompanyService;
+import com.project.recruit_and_employ.service.ICompanyUserService;
 import com.project.recruit_and_employ.service.IUserService;
 import com.project.recruit_and_employ.vo.ResultVO;
 import io.swagger.annotations.Api;
@@ -33,10 +37,12 @@ public class UserLoginController {
 
     @Autowired
     private IUserService userService;
+    @Autowired
+    private ICompanyService companyService;
 
     @ApiOperation(value = "用户注册")
     @PostMapping("register")
-    @ApiOperationSupport(ignoreParameters = {"dto.userId"})
+    @ApiOperationSupport(ignoreParameters = {"dto.userId", "dto.userIds", "dto.pageNum", "dto.pageSize"})
     public ResultVO register(@RequestBody UserDTO dto) {
 
         UserPO user = userService.getOne(Wrappers.lambdaQuery(UserPO.class).eq(UserPO::getUserName, dto.getUserName()));
@@ -49,6 +55,24 @@ public class UserLoginController {
         userPO.setPassword(DigestUtils.md5DigestAsHex(userPO.getPassword().getBytes()));
 
         userService.save(userPO);
+
+        if (UserConstant.ROLE_COMPANY.equals(dto.getRole())) {
+            CompanyPO companyPO = companyService.getOne(Wrappers.lambdaQuery(CompanyPO.class).eq(CompanyPO::getCompanyName, dto.getCompanyName()));
+            if (companyPO != null) {
+                companyService.update(Wrappers.lambdaUpdate(CompanyPO.class)
+                        .set(CompanyPO::getCompanyDetail, dto.getCompanyDetail())
+                        .eq(CompanyPO::getCompanyName, dto.getCompanyName()));
+            } else {
+                companyPO = new CompanyPO();
+                companyPO.setCompanyName(dto.getCompanyName());
+                companyPO.setCompanyDetail(dto.getCompanyDetail());
+                companyService.save(companyPO);
+            }
+
+            CompanyUserPO companyUserPO = new CompanyUserPO();
+            companyUserPO.setCompanyId(companyPO.getCompanyId());
+            companyUserPO.setUserId(userPO.getUserId());
+        }
 
         return ResultVO.ok();
     }

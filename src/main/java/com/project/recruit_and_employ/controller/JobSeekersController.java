@@ -3,6 +3,7 @@ package com.project.recruit_and_employ.controller;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import com.project.recruit_and_employ.constant.Constant;
 import com.project.recruit_and_employ.constant.UserConstant;
 import com.project.recruit_and_employ.dto.JobSeekersDTO;
 import com.project.recruit_and_employ.dto.PositionDTO;
@@ -10,6 +11,7 @@ import com.project.recruit_and_employ.enums.MessageEnum;
 import com.project.recruit_and_employ.mapstruct.JobSeekersConverter;
 import com.project.recruit_and_employ.pojo.*;
 import com.project.recruit_and_employ.service.*;
+import com.project.recruit_and_employ.utils.UploadFile;
 import com.project.recruit_and_employ.vo.PositionVO;
 import com.project.recruit_and_employ.vo.ResultVO;
 import io.swagger.annotations.Api;
@@ -21,7 +23,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,10 +77,10 @@ public class JobSeekersController {
         return ResultVO.ok();
     }
 
-    @ApiOperation(value = "查询求职者信息")
-    @PostMapping("queryJobSeekersInfo")
+    @ApiOperation(value = "显示求职者信息")
+    @PostMapping("showJobSeekersInfo")
     @ApiOperationSupport(includeParameters = {"dto.userId"})
-    public ResultVO<JobSeekersPO> queryJobSeekersInfo(@RequestBody JobSeekersDTO dto) {
+    public ResultVO<JobSeekersPO> showJobSeekersInfo(@RequestBody JobSeekersDTO dto) {
 
         JobSeekersPO jobSeekersPO = jobSeekersService.getById(dto.getUserId());
 
@@ -110,6 +114,7 @@ public class JobSeekersController {
 
         for (PositionPO positionPO : positionPOS) {
             PositionVO positionVO = new PositionVO();
+            positionVO.setPositionId(positionPO.getPositionId());
             positionVO.setUserId(positionPO.getUserId());
             positionVO.setCompanyDetail(companyDetailMap.get(positionPO.getCompanyId()));
             positionVO.setCompanyName(companyNameMap.get(positionPO.getCompanyId()));
@@ -119,7 +124,6 @@ public class JobSeekersController {
             positionVO.setPositionDetail(positionPO.getPositionDetail());
             positionVO.setPositionName(positionPO.getPositionName());
             positionVO.setPositionSalary(positionPO.getPositionSalary());
-            positionVO.setRecruitFlag(positionPO.getRecruitFlag());
             positionVO.setSex(sexMap.get(positionPO.getUserId()));
             positionVOS.add(positionVO);
         }
@@ -129,6 +133,7 @@ public class JobSeekersController {
 
     @ApiOperation(value = "招聘信息查询")
     @PostMapping("recruitInfo")
+    @ApiOperationSupport(ignoreParameters = {"dto.userId", "dto.positionId","dto.positionIds"})
     public ResultVO<List<PositionVO>> recruitInfo(@RequestBody PositionDTO dto) {
 
         List<CompanyPO> companyPOList = companyService.list();
@@ -158,6 +163,7 @@ public class JobSeekersController {
 
         for (PositionPO positionPO : positionPOS) {
             PositionVO positionVO = new PositionVO();
+            positionVO.setPositionId(positionPO.getPositionId());
             positionVO.setUserId(positionPO.getUserId());
             positionVO.setCompanyDetail(companyDetailMap.get(positionPO.getCompanyId()));
             positionVO.setCompanyName(companyNameMap.get(positionPO.getCompanyId()));
@@ -167,7 +173,6 @@ public class JobSeekersController {
             positionVO.setPositionDetail(positionPO.getPositionDetail());
             positionVO.setPositionName(positionPO.getPositionName());
             positionVO.setPositionSalary(positionPO.getPositionSalary());
-            positionVO.setRecruitFlag(positionPO.getRecruitFlag());
             positionVO.setSex(sexMap.get(positionPO.getUserId()));
             positionVOS.add(positionVO);
         }
@@ -175,5 +180,15 @@ public class JobSeekersController {
         return ResultVO.ok().setData(positionVOS);
     }
 
+    @ApiOperation(value = "简历上传")
+    @PostMapping("uploadResume")
+    public ResultVO<String> uploadResume(MultipartFile file) throws IOException {
+        Map<String, String> map = UploadFile.upload(Constant.BASE_DIR, file, Constant.DEFAULT_ALLOWED_EXTENSION);
+        if (!Constant.SUCCESS.equals(map.get("msg"))) {
+            return new ResultVO<>(MessageEnum.FILE_FAIL);
+        }
+
+        return ResultVO.ok().setData(map.get("path"));
+    }
 
 }

@@ -1,6 +1,7 @@
 package com.project.recruit_and_employ.mapstruct;
 
 import com.project.recruit_and_employ.dto.JobSeekersDTO;
+import com.project.recruit_and_employ.dto.MaJobSeekersDTO;
 import com.project.recruit_and_employ.pojo.JobSeekersPO;
 import org.apache.ibatis.annotations.Mapper;
 import org.mapstruct.Mappings;
@@ -20,4 +21,7 @@ public interface JobSeekersConverter {
 
     @Mappings({})
     JobSeekersPO convertToPO(JobSeekersDTO dto);
+
+    @Mappings({})
+    JobSeekersPO convertToPO(MaJobSeekersDTO dto);
 }
