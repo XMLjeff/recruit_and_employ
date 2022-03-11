@@ -24,7 +24,7 @@ public class Knife4jConfig {
                 .groupName("1.X版本")
                 .select()
                 //这里指定Controller扫描包路径
-                .apis(RequestHandlerSelectors.basePackage("com.project.online_examination.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.project.recruit_and_employ.controller"))
                 .paths(PathSelectors.any())
                 .build();
         return docket;
