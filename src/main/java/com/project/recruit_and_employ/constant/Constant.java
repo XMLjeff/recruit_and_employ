@@ -29,7 +29,7 @@ public class Constant {
     /**
      * 虚拟路径名
      */
-    public static final String PATH = "http://localhost:9100";
+    public static final String PATH = "http://localhost:9100/recruitAndEmploy";
     /**
      * 文件存储路径
      */
