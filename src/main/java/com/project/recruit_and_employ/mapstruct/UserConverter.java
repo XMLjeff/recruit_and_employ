@@ -1,8 +1,10 @@
 package com.project.recruit_and_employ.mapstruct;
 
+import com.project.recruit_and_employ.dto.CompanyUserDTO;
 import com.project.recruit_and_employ.dto.MaJobSeekersDTO;
 import com.project.recruit_and_employ.dto.UserDTO;
 import com.project.recruit_and_employ.pojo.UserPO;
+import com.project.recruit_and_employ.vo.CompanyUserVO;
 import com.project.recruit_and_employ.vo.UserVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mappings;
@@ -26,4 +28,9 @@ public interface UserConverter {
 
     @Mappings({})
     UserPO convertToPO(MaJobSeekersDTO dto);
+
+    @Mappings({})
+    UserPO convertToPO(CompanyUserDTO dto);
+
+
 }

@@ -7,19 +7,15 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.project.recruit_and_employ.constant.UserConstant;
-import com.project.recruit_and_employ.dto.CompanyDTO;
-import com.project.recruit_and_employ.dto.MaJobSeekersDTO;
-import com.project.recruit_and_employ.dto.UserDTO;
+import com.project.recruit_and_employ.dto.*;
 import com.project.recruit_and_employ.enums.MessageEnum;
 import com.project.recruit_and_employ.mapstruct.CompanyConverter;
 import com.project.recruit_and_employ.mapstruct.JobSeekersConverter;
+import com.project.recruit_and_employ.mapstruct.PositionConverter;
 import com.project.recruit_and_employ.mapstruct.UserConverter;
 import com.project.recruit_and_employ.pojo.*;
 import com.project.recruit_and_employ.service.*;
-import com.project.recruit_and_employ.vo.MaJobSeekersVO;
-import com.project.recruit_and_employ.vo.PageInfoVO;
-import com.project.recruit_and_employ.vo.ResultVO;
-import com.project.recruit_and_employ.vo.UserVO;
+import com.project.recruit_and_employ.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +27,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -229,4 +229,192 @@ public class ManagerController {
         return ResultVO.ok().setData(companyPOS);
     }
 
+    @ApiOperation(value = "新增公司用户")
+    @PostMapping("insertCompanyUser")
+    @ApiOperationSupport(includeParameters = {"dto.companyId", "dto.userName", "dto.nickName", "dto.sex", "dto.phoneNum"})
+    public ResultVO insertCompanyUser(@RequestBody CompanyUserDTO dto) {
+
+        UserPO user = userService.getOne(Wrappers.lambdaQuery(UserPO.class).eq(UserPO::getUserName, dto.getUserName()));
+        if (user != null) {
+            return new ResultVO(MessageEnum.USER_EXIST);
+        }
+
+        UserPO userPO = UserConverter.INSTANCE.convertToPO(dto);
+        userPO.setPassword(DigestUtils.md5DigestAsHex(UserConstant.DEFAULT_PASSWORD.getBytes()));
+        userPO.setRole(UserConstant.ROLE_COMPANY);
+        userService.save(userPO);
+
+        CompanyUserPO companyUserPO = new CompanyUserPO();
+        companyUserPO.setCompanyId(dto.getCompanyId());
+        companyUserPO.setUserId(userPO.getUserId());
+        companyUserService.save(companyUserPO);
+
+        return ResultVO.ok();
+    }
+
+    @ApiOperation(value = "修改公司用户")
+    @PostMapping("editCompanyUser")
+    @ApiOperationSupport(includeParameters = {"dto.userId", "dto.nickName", "dto.sex", "dto.phoneNum"})
+    public ResultVO editCompanyUser(@RequestBody UserDTO dto) {
+
+        UserPO userPO = UserConverter.INSTANCE.convertToPO(dto);
+        userService.updateById(userPO);
+
+        return ResultVO.ok();
+    }
+
+    @ApiOperation(value = "删除公司用户")
+    @PostMapping("deleteCompanyUser")
+    @ApiOperationSupport(includeParameters = {"dto.userIds"})
+    public ResultVO deleteCompanyUser(@RequestBody UserDTO dto) {
+
+        userService.removeByIds(dto.getUserIds());
+        positionService.remove(Wrappers.lambdaQuery(PositionPO.class).in(PositionPO::getUserId, dto.getUserIds()));
+
+        return ResultVO.ok();
+    }
+
+    @ApiOperation(value = "查询公司用户")
+    @PostMapping("queryCompanyUser")
+    @ApiOperationSupport(includeParameters = {"dto.companyName", "dto.nickName", "dto.sex", "dto.pageNum", "dto.pageSize"})
+    public ResultVO<List<CompanyUserVO>> queryCompanyUser(@RequestBody CompanyUserDTO dto) {
+
+        List<Long> companyIds = null;
+        if (!StringUtils.isEmpty(dto.getCompanyName())) {
+            List<CompanyPO> companyPOS = companyService.list(Wrappers.lambdaQuery(CompanyPO.class)
+                    .like(CompanyPO::getCompanyName, dto.getCompanyName()));
+            if (!CollectionUtils.isEmpty(companyPOS)) {
+                companyIds = companyPOS.stream().map(t -> t.getCompanyId()).collect(Collectors.toList());
+            }
+        }
+
+        List<Long> userIds = null;
+        if (!CollectionUtils.isEmpty(companyIds)) {
+            List<CompanyUserPO> companyUserPOS = companyUserService.list(Wrappers.lambdaQuery(CompanyUserPO.class).in(CompanyUserPO::getCompanyId, companyIds));
+            if (!CollectionUtils.isEmpty(companyUserPOS)) {
+                userIds = companyUserPOS.stream().map(t -> t.getUserId()).collect(Collectors.toList());
+            }
+        }
+
+        Page<UserPO> page = userService.page(new Page<>(dto.getPageNum(), dto.getPageSize()), Wrappers.lambdaQuery(UserPO.class)
+                .in(!CollectionUtils.isEmpty(userIds), UserPO::getUserId, userIds)
+                .like(!StringUtils.isEmpty(dto.getNickName()), UserPO::getNickName, dto.getNickName())
+                .eq(dto.getSex() != null, UserPO::getSex, dto.getSex())
+                .eq(UserPO::getRole, UserConstant.ROLE_COMPANY));
+
+
+        List<UserPO> userPOS = page.getRecords();
+        List<Long> userIdList = null;
+        if (!CollectionUtils.isEmpty(userPOS)) {
+            userIdList = userPOS.stream().map(t -> t.getUserId()).collect(Collectors.toList());
+        }
+        List<Long> companyIdList = null;
+        Map<Long, Long> userCompanyMap = new HashMap<>();
+        if (!CollectionUtils.isEmpty(userIdList)) {
+            List<CompanyUserPO> list = companyUserService.list(Wrappers.lambdaQuery(CompanyUserPO.class).in(CompanyUserPO::getUserId, userIdList));
+            if (!CollectionUtils.isEmpty(list)) {
+                companyIdList = list.stream().map(t -> t.getCompanyId()).collect(Collectors.toList());
+                userCompanyMap = list.stream().collect(Collectors.toMap(CompanyUserPO::getUserId, CompanyUserPO::getCompanyId));
+            }
+        }
+
+        Map<Long, String> companyNameMap = new HashMap<>();
+        Map<Long, String> companyDetailMap = new HashMap<>();
+        List<CompanyPO> companyPOS = companyService.list(Wrappers.lambdaQuery(CompanyPO.class).in(CompanyPO::getCompanyId, companyIdList));
+        if (!CollectionUtils.isEmpty(companyPOS)) {
+            companyNameMap = companyPOS.stream().collect(Collectors.toMap(CompanyPO::getCompanyId, CompanyPO::getCompanyName));
+            companyDetailMap = companyPOS.stream().collect(Collectors.toMap(CompanyPO::getCompanyId, CompanyPO::getCompanyDetail));
+        }
+        List<CompanyUserVO> companyUserVOS = CompanyConverter.INSTANCE.convertToVO(userPOS);
+        Map<Long, Long> finalUserCompanyMap = userCompanyMap;
+        Map<Long, String> finalCompanyNameMap = companyNameMap;
+        Map<Long, String> finalCompanyDetailMap = companyDetailMap;
+        companyUserVOS.forEach(t -> {
+            t.setCompanyId(finalUserCompanyMap.get(t.getUserId()));
+            t.setCompanyName(finalCompanyNameMap.get(finalUserCompanyMap.get(t.getUserId())));
+            t.setCompanyDetail(finalCompanyDetailMap.get(finalUserCompanyMap.get(t.getUserId())));
+        });
+
+        return ResultVO.ok().setData(companyUserVOS);
+    }
+
+    @ApiOperation(value = "新增岗位")
+    @PostMapping("insertPosition")
+    @ApiOperationSupport(ignoreParameters = {"dto.positionId", "dto.pageNum", "dto.pageSize", "dto.companyName", "dto.positionIds"})
+    public ResultVO insertPosition(@RequestBody PositionDTO dto) {
+        PositionPO positionPO = PositionConverter.INSTANCE.convertToPO(dto);
+        CompanyUserPO companyUserPO = companyUserService.getOne(Wrappers.lambdaQuery(CompanyUserPO.class).eq(CompanyUserPO::getUserId, dto.getUserId()));
+        positionPO.setCompanyId(companyUserPO.getCompanyId());
+
+        positionService.save(positionPO);
+
+        return ResultVO.ok();
+    }
+
+    @ApiOperation(value = "修改岗位")
+    @PostMapping("editPosition")
+    @ApiOperationSupport(ignoreParameters = {"dto.userId", "dto.pageNum", "dto.pageSize", "dto.companyName", "dto.positionIds"})
+    public ResultVO editPosition(@RequestBody PositionDTO dto) {
+        PositionPO positionPO = PositionConverter.INSTANCE.convertToPO(dto);
+        positionService.updateById(positionPO);
+
+        return ResultVO.ok();
+    }
+
+    @ApiOperation(value = "删除岗位")
+    @PostMapping("deletePosition")
+    @ApiOperationSupport(includeParameters = {"dto.positionIds"})
+    public ResultVO deletePosition(@RequestBody PositionDTO dto) {
+        positionService.removeByIds(dto.getPositionIds());
+        return ResultVO.ok();
+    }
+
+    @ApiOperation(value = "查询岗位")
+    @PostMapping("queryPosition")
+    @ApiOperationSupport(ignoreParameters = {"dto.userId", "dto.positionId", "dto.positionIds"})
+    public ResultVO<List<PositionVO>> queryPosition(@RequestBody PositionDTO dto) {
+
+        List<CompanyPO> companyPOList = companyService.list();
+        Map<Long, String> companyNameMap = companyPOList.stream().collect(Collectors.toMap(CompanyPO::getCompanyId, CompanyPO::getCompanyName));
+        Map<Long, String> companyDetailMap = companyPOList.stream().collect(Collectors.toMap(CompanyPO::getCompanyId, CompanyPO::getCompanyDetail));
+
+        List<UserPO> userPOS = userService.list();
+        Map<Long, String> nickNameMap = userPOS.stream().collect(Collectors.toMap(UserPO::getUserId, UserPO::getNickName));
+        Map<Long, Integer> sexMap = userPOS.stream().collect(Collectors.toMap(UserPO::getUserId, UserPO::getSex));
+
+        List<CompanyPO> companyPOS = null;
+        if (!StringUtils.isEmpty(dto.getCompanyName())) {
+            companyPOS = companyService.list(Wrappers.lambdaQuery(CompanyPO.class).like(CompanyPO::getCompanyName, dto.getCompanyName()));
+        }
+
+        Page<PositionPO> page = positionService.page(new Page<>(dto.getPageNum(), dto.getPageSize()), Wrappers.lambdaQuery(PositionPO.class)
+                .like(!StringUtils.isEmpty(dto.getPositionName()), PositionPO::getPositionName, dto.getPositionName())
+                .eq(dto.getPositionCategory() != null, PositionPO::getPositionCategory, dto.getPositionCategory())
+                .in(!CollectionUtils.isEmpty(companyPOS), PositionPO::getCompanyId, companyPOS.stream().map(t -> t.getCompanyId()).collect(Collectors.toList()))
+                .ge(dto.getPositionSalary() != null, PositionPO::getPositionSalary, dto.getPositionSalary())
+                .le(dto.getPositionSalary() != null, PositionPO::getPositionSalary, dto.getPositionSalary().add(new BigDecimal(2000)))
+                .like(!StringUtils.isEmpty(dto.getPlaceOfWork()), PositionPO::getPlaceOfWork, dto.getPlaceOfWork()));
+
+        List<PositionPO> positionPOS = page.getRecords();
+
+        List<PositionVO> positionVOS = new ArrayList<>();
+
+        for (PositionPO positionPO : positionPOS) {
+            PositionVO positionVO = new PositionVO();
+            positionVO.setPositionId(positionPO.getPositionId());
+            positionVO.setUserId(positionPO.getUserId());
+            positionVO.setCompanyDetail(companyDetailMap.get(positionPO.getCompanyId()));
+            positionVO.setCompanyName(companyNameMap.get(positionPO.getCompanyId()));
+            positionVO.setNickName(nickNameMap.get(positionPO.getUserId()));
+            positionVO.setPlaceOfWork(positionPO.getPlaceOfWork());
+            positionVO.setPositionCategory(positionPO.getPositionCategory());
+            positionVO.setPositionDetail(positionPO.getPositionDetail());
+            positionVO.setPositionName(positionPO.getPositionName());
+            positionVO.setPositionSalary(positionPO.getPositionSalary());
+            positionVO.setSex(sexMap.get(positionPO.getUserId()));
+            positionVOS.add(positionVO);
+        }
+
+        return ResultVO.ok().setData(positionVOS);
+    }
 }
