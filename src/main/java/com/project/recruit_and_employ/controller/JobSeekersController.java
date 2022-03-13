@@ -1,5 +1,6 @@
 package com.project.recruit_and_employ.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -133,7 +134,7 @@ public class JobSeekersController {
 
     @ApiOperation(value = "招聘信息查询")
     @PostMapping("recruitInfo")
-    @ApiOperationSupport(ignoreParameters = {"dto.userId", "dto.positionId","dto.positionIds"})
+    @ApiOperationSupport(ignoreParameters = {"dto.userId", "dto.positionId", "dto.positionIds"})
     public ResultVO<List<PositionVO>> recruitInfo(@RequestBody PositionDTO dto) {
 
         List<CompanyPO> companyPOList = companyService.list();
@@ -145,17 +146,24 @@ public class JobSeekersController {
         Map<Long, Integer> sexMap = userPOS.stream().collect(Collectors.toMap(UserPO::getUserId, UserPO::getSex));
 
         List<CompanyPO> companyPOS = null;
+        List<Long> collect = null;
         if (!StringUtils.isEmpty(dto.getCompanyName())) {
             companyPOS = companyService.list(Wrappers.lambdaQuery(CompanyPO.class).like(CompanyPO::getCompanyName, dto.getCompanyName()));
+            if (!CollectionUtils.isEmpty(companyPOS)) {
+                collect = companyPOS.stream().map(t -> t.getCompanyId()).collect(Collectors.toList());
+            }
         }
 
-        Page<PositionPO> page = positionService.page(new Page<>(dto.getPageNum(), dto.getPageSize()), Wrappers.lambdaQuery(PositionPO.class)
-                .like(!StringUtils.isEmpty(dto.getPositionName()), PositionPO::getPositionName, dto.getPositionName())
+        LambdaQueryWrapper<PositionPO> wrapper = Wrappers.lambdaQuery(PositionPO.class);
+        wrapper.like(!StringUtils.isEmpty(dto.getPositionName()), PositionPO::getPositionName, dto.getPositionName())
                 .eq(dto.getPositionCategory() != null, PositionPO::getPositionCategory, dto.getPositionCategory())
-                .in(!CollectionUtils.isEmpty(companyPOS), PositionPO::getCompanyId, companyPOS.stream().map(t -> t.getCompanyId()).collect(Collectors.toList()))
-                .ge(dto.getPositionSalary() != null, PositionPO::getPositionSalary, dto.getPositionSalary())
-                .le(dto.getPositionSalary() != null, PositionPO::getPositionSalary, dto.getPositionSalary().add(new BigDecimal(2000)))
-                .like(!StringUtils.isEmpty(dto.getPlaceOfWork()), PositionPO::getPlaceOfWork, dto.getPlaceOfWork()));
+                .in(!CollectionUtils.isEmpty(collect), PositionPO::getCompanyId, collect)
+                .ge(dto.getPositionSalary() != null, PositionPO::getPositionSalary, dto.getPositionSalary());
+        if (dto.getPositionSalary() != null) {
+            wrapper.le(dto.getPositionSalary() != null, PositionPO::getPositionSalary, dto.getPositionSalary().add(new BigDecimal(2000)));
+        }
+        wrapper.like(!StringUtils.isEmpty(dto.getPlaceOfWork()), PositionPO::getPlaceOfWork, dto.getPlaceOfWork());
+        Page<PositionPO> page = positionService.page(new Page<>(dto.getPageNum(), dto.getPageSize()), wrapper);
 
         List<PositionPO> positionPOS = page.getRecords();
 

@@ -17,7 +17,7 @@
         j.introduction,
         j.resume_url
         FROM
-        USER u,
+        user u,
         job_seekers j
         <where>
             u.role = 2

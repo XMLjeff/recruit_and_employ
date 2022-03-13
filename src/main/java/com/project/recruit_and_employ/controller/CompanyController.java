@@ -1,5 +1,6 @@
 package com.project.recruit_and_employ.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -51,7 +52,7 @@ public class CompanyController {
 
     @ApiOperation(value = "新增岗位")
     @PostMapping("insertPosition")
-    @ApiOperationSupport(ignoreParameters = {"dto.positionId", "dto.pageNum", "dto.pageSize", "dto.companyName","dto.positionIds"})
+    @ApiOperationSupport(ignoreParameters = {"dto.positionId", "dto.pageNum", "dto.pageSize", "dto.companyName", "dto.positionIds"})
     public ResultVO insertPosition(@RequestBody PositionDTO dto) {
         PositionPO positionPO = PositionConverter.INSTANCE.convertToPO(dto);
         CompanyUserPO companyUserPO = companyUserService.getOne(Wrappers.lambdaQuery(CompanyUserPO.class).eq(CompanyUserPO::getUserId, dto.getUserId()));
@@ -64,7 +65,7 @@ public class CompanyController {
 
     @ApiOperation(value = "修改岗位")
     @PostMapping("editPosition")
-    @ApiOperationSupport(ignoreParameters = {"dto.userId", "dto.pageNum", "dto.pageSize", "dto.companyName","dto.positionIds"})
+    @ApiOperationSupport(ignoreParameters = {"dto.userId", "dto.pageNum", "dto.pageSize", "dto.companyName", "dto.positionIds"})
     public ResultVO editPosition(@RequestBody PositionDTO dto) {
         PositionPO positionPO = PositionConverter.INSTANCE.convertToPO(dto);
         positionService.updateById(positionPO);
@@ -100,11 +101,15 @@ public class CompanyController {
     @ApiOperationSupport(includeParameters = {"dto.intendedPosition", "dto.intendedPlaceOfWork", "dto.salaryExpectation", "dto.pageNum", "dto.pageSize"})
     public ResultVO<List<UserVO>> queryJobSeekers(@RequestBody JobSeekersDTO dto) {
 
-        Page<JobSeekersPO> page = jobSeekersService.page(new Page<>(dto.getPageNum(), dto.getPageSize()), Wrappers.lambdaQuery(JobSeekersPO.class)
-                .like(!StringUtils.isEmpty(dto.getIntendedPosition()), JobSeekersPO::getIntendedPosition, dto.getIntendedPosition())
+        LambdaQueryWrapper<JobSeekersPO> wrapper = Wrappers.lambdaQuery(JobSeekersPO.class);
+        wrapper.like(!StringUtils.isEmpty(dto.getIntendedPosition()), JobSeekersPO::getIntendedPosition, dto.getIntendedPosition())
                 .like(!StringUtils.isEmpty(dto.getIntendedPlaceOfWork()), JobSeekersPO::getIntendedPlaceOfWork, dto.getIntendedPlaceOfWork())
-                .ge(dto.getSalaryExpectation() != null, JobSeekersPO::getSalaryExpectation, dto.getSalaryExpectation())
-                .le(dto.getSalaryExpectation() != null, JobSeekersPO::getSalaryExpectation, dto.getSalaryExpectation().add(new BigDecimal(2000))));
+                .ge(dto.getSalaryExpectation() != null, JobSeekersPO::getSalaryExpectation, dto.getSalaryExpectation());
+        if (dto.getSalaryExpectation() != null) {
+            wrapper.le(JobSeekersPO::getSalaryExpectation, dto.getSalaryExpectation().add(new BigDecimal(2000)));
+        }
+
+        Page<JobSeekersPO> page = jobSeekersService.page(new Page<>(dto.getPageNum(), dto.getPageSize()), wrapper);
 
         List<JobSeekersPO> records = page.getRecords();
         List<Long> userIds = null;
