@@ -1,4 +1,4 @@
-package com;
+package com.project.recruit_and_employ;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
