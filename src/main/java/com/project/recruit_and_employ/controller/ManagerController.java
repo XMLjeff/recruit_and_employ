@@ -319,7 +319,11 @@ public class ManagerController {
 
         Map<Long, String> companyNameMap = new HashMap<>();
         Map<Long, String> companyDetailMap = new HashMap<>();
-        List<CompanyPO> companyPOS = companyService.list(Wrappers.lambdaQuery(CompanyPO.class).in(CompanyPO::getCompanyId, companyIdList));
+        List<CompanyPO> companyPOS = null;
+        if (!CollectionUtils.isEmpty(companyIdList)) {
+            companyPOS = companyService.list(Wrappers.lambdaQuery(CompanyPO.class).in(CompanyPO::getCompanyId, companyIdList));
+        }
+
         if (!CollectionUtils.isEmpty(companyPOS)) {
             companyNameMap = companyPOS.stream().collect(Collectors.toMap(CompanyPO::getCompanyId, CompanyPO::getCompanyName));
             companyDetailMap = companyPOS.stream().collect(Collectors.toMap(CompanyPO::getCompanyId, CompanyPO::getCompanyDetail));
