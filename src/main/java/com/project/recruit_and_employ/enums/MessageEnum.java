@@ -22,6 +22,7 @@ public enum MessageEnum {
     DEFAULT_PASSWORD(1010, "重置成功,重置之后的密码是" + UserConstant.DEFAULT_PASSWORD),
     FILE_FAIL(1011, "文件上传失败"),
     ROLE_ERROR(1012, "角色错误"),
+    WRITE_INFO(1013, "请先填写求职信息，并上传简历"),
 
 
     ERROR(2000, "内部服务器错误。");

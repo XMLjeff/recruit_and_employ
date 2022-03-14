@@ -2,6 +2,7 @@ package com.project.recruit_and_employ.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import com.project.recruit_and_employ.enums.MessageEnum;
 import com.project.recruit_and_employ.pojo.JobSeekersPO;
 import com.project.recruit_and_employ.pojo.PhoneExchangePO;
 import com.project.recruit_and_employ.pojo.ResumeExchangePO;
@@ -40,6 +41,9 @@ public class ResumeExchangeController {
     public ResultVO exchangeResume(@RequestBody ResumeExchangePO po) {
 
         JobSeekersPO jobSeekersPO = jobSeekersService.getById(po.getSenderId());
+        if (jobSeekersPO == null) {
+            return new ResultVO(MessageEnum.WRITE_INFO);
+        }
 
         ResumeExchangePO resumeExchangePO = resumeExchangeService.getOne(Wrappers.lambdaQuery(ResumeExchangePO.class)
                 .eq(ResumeExchangePO::getSenderId, po.getSenderId())
