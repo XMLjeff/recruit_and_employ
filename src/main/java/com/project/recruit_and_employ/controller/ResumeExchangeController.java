@@ -40,7 +40,7 @@ public class ResumeExchangeController {
     @ApiOperationSupport(ignoreParameters = {"po.resumeUrl"})
     public ResultVO exchangeResume(@RequestBody ResumeExchangePO po) {
 
-        JobSeekersPO jobSeekersPO = jobSeekersService.getById(po.getSenderId());
+        JobSeekersPO jobSeekersPO = jobSeekersService.getOne(Wrappers.lambdaQuery(JobSeekersPO.class).eq(JobSeekersPO::getUserId, po.getSenderId()));
         if (jobSeekersPO == null) {
             return new ResultVO(MessageEnum.WRITE_INFO);
         }

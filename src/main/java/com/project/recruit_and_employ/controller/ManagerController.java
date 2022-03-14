@@ -139,8 +139,13 @@ public class ManagerController {
         UserPO userPO = UserConverter.INSTANCE.convertToPO(dto);
         userService.updateById(userPO);
 
-        JobSeekersPO jobSeekersPO = JobSeekersConverter.INSTANCE.convertToPO(dto);
-        jobSeekersService.updateById(jobSeekersPO);
+        jobSeekersService.update(Wrappers.lambdaUpdate(JobSeekersPO.class).eq(JobSeekersPO::getUserId, dto.getUserId())
+                .set(!StringUtils.isEmpty(dto.getIntendedPosition()), JobSeekersPO::getIntendedPosition, dto.getIntendedPosition())
+                .set(!StringUtils.isEmpty(dto.getIntendedPlaceOfWork()), JobSeekersPO::getIntendedPlaceOfWork, dto.getIntendedPlaceOfWork())
+                .set(dto.getSalaryExpectation() != null, JobSeekersPO::getSalaryExpectation, dto.getSalaryExpectation())
+                .set(!StringUtils.isEmpty(dto.getScholarshipInfo()), JobSeekersPO::getScholarshipInfo, dto.getScholarshipInfo())
+                .set(!StringUtils.isEmpty(dto.getIntroduction()), JobSeekersPO::getIntroduction, dto.getIntroduction())
+                .set(!StringUtils.isEmpty(dto.getResumeUrl()), JobSeekersPO::getResumeUrl, dto.getResumeUrl()));
 
         return ResultVO.ok();
     }
@@ -151,7 +156,7 @@ public class ManagerController {
     public ResultVO deleteJobSeekers(@RequestBody MaJobSeekersDTO dto) {
 
         userService.removeByIds(dto.getUserIds());
-        jobSeekersService.removeByIds(dto.getUserIds());
+        jobSeekersService.remove(Wrappers.lambdaQuery(JobSeekersPO.class).in(JobSeekersPO::getUserId, dto.getUserIds()));
 
         return ResultVO.ok();
     }

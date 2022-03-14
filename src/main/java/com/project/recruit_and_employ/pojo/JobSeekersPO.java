@@ -30,7 +30,6 @@ public class JobSeekersPO implements Serializable {
      * 用户id（主键）
      */
     @ApiModelProperty(value = "用户id（主键）")
-    @TableId(type = IdType.AUTO)
     private Long userId;
     /**
      * 意向岗位

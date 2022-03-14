@@ -69,11 +69,17 @@ public class JobSeekersController {
             return new ResultVO(MessageEnum.ROLE_ERROR);
         }
 
-        JobSeekersPO jobSeekersPO = jobSeekersService.getById(dto.getUserId());
+        JobSeekersPO jobSeekersPO = jobSeekersService.getOne(Wrappers.lambdaQuery(JobSeekersPO.class).eq(JobSeekersPO::getUserId, dto.getUserId()));
         if (jobSeekersPO == null) {
             jobSeekersService.save(JobSeekersConverter.INSTANCE.convertToPO(dto));
         } else {
-            jobSeekersService.updateById(JobSeekersConverter.INSTANCE.convertToPO(dto));
+            jobSeekersService.update(Wrappers.lambdaUpdate(JobSeekersPO.class).eq(JobSeekersPO::getUserId, dto.getUserId())
+                    .set(!StringUtils.isEmpty(dto.getIntendedPosition()), JobSeekersPO::getIntendedPosition, dto.getIntendedPosition())
+                    .set(!StringUtils.isEmpty(dto.getIntendedPlaceOfWork()), JobSeekersPO::getIntendedPlaceOfWork, dto.getIntendedPlaceOfWork())
+                    .set(dto.getSalaryExpectation() != null, JobSeekersPO::getSalaryExpectation, dto.getSalaryExpectation())
+                    .set(!StringUtils.isEmpty(dto.getScholarshipInfo()), JobSeekersPO::getScholarshipInfo, dto.getScholarshipInfo())
+                    .set(!StringUtils.isEmpty(dto.getIntroduction()), JobSeekersPO::getIntroduction, dto.getIntroduction())
+                    .set(!StringUtils.isEmpty(dto.getResumeUrl()), JobSeekersPO::getResumeUrl, dto.getResumeUrl()));
         }
 
         return ResultVO.ok();
@@ -84,7 +90,7 @@ public class JobSeekersController {
     @ApiOperationSupport(includeParameters = {"dto.userId"})
     public ResultVO<JobSeekersPO> showJobSeekersInfo(@RequestBody JobSeekersDTO dto) {
 
-        JobSeekersPO jobSeekersPO = jobSeekersService.getById(dto.getUserId());
+        JobSeekersPO jobSeekersPO = jobSeekersService.getOne(Wrappers.lambdaQuery(JobSeekersPO.class).eq(JobSeekersPO::getUserId, dto.getUserId()));
 
         return ResultVO.ok().setData(jobSeekersPO);
     }
@@ -102,7 +108,7 @@ public class JobSeekersController {
         Map<Long, String> nickNameMap = userPOS.stream().collect(Collectors.toMap(UserPO::getUserId, UserPO::getNickName));
         Map<Long, Integer> sexMap = userPOS.stream().collect(Collectors.toMap(UserPO::getUserId, UserPO::getSex));
 
-        JobSeekersPO jobSeekersPO = jobSeekersService.getById(dto.getUserId());
+        JobSeekersPO jobSeekersPO = jobSeekersService.getOne(Wrappers.lambdaQuery(JobSeekersPO.class).eq(JobSeekersPO::getUserId, dto.getUserId()));
 
         Page<PositionPO> page = positionService.page(new Page<>(dto.getPageNum(), dto.getPageSize()), Wrappers.lambdaQuery(PositionPO.class)
                 .like(PositionPO::getPlaceOfWork, jobSeekersPO.getIntendedPlaceOfWork())
