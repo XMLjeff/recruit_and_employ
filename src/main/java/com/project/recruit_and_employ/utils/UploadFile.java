@@ -39,7 +39,7 @@ public class UploadFile {
         //得到文件名
         String fileName = extractFilename(file);
         //创建文件
-        File desc = File.createTempFile(baseDir, fileName);
+        File desc = getAbsoluteFile(baseDir,fileName);
         //传入文件
         file.transferTo(desc);
         //得到虚拟路径名

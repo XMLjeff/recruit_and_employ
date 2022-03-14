@@ -20,7 +20,7 @@
         user u,
         job_seekers j
         <where>
-            u.role = 2
+            u.role = 2 and u.user_id = j.user_id
             <if test="nickName != null and nickName != ''">
                 and u.nick_name like concat('%', #{nickName,jdbcType=VARCHAR}, '%')
             </if>
