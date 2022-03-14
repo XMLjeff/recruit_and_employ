@@ -13,6 +13,7 @@ import com.project.recruit_and_employ.service.ICompanyUserService;
 import com.project.recruit_and_employ.service.IJobSeekersService;
 import com.project.recruit_and_employ.service.IPositionService;
 import com.project.recruit_and_employ.service.IUserService;
+import com.project.recruit_and_employ.vo.PageInfoVO;
 import com.project.recruit_and_employ.vo.ResultVO;
 import com.project.recruit_and_employ.vo.UserVO;
 import io.swagger.annotations.Api;
@@ -84,7 +85,7 @@ public class CompanyController {
     @ApiOperation(value = "查询岗位")
     @PostMapping("queryPosition")
     @ApiOperationSupport(includeParameters = {"dto.userId", "dto.positionName", "dto.positionCategory", "dto.pageNum", "dto.pageSize"})
-    public ResultVO<List<PositionPO>> queryPosition(@RequestBody PositionDTO dto) {
+    public ResultVO<PageInfoVO<PositionPO>> queryPosition(@RequestBody PositionDTO dto) {
 
         Page<PositionPO> page = positionService.page(new Page<>(dto.getPageNum(), dto.getPageSize()), Wrappers.lambdaQuery(PositionPO.class)
                 .eq(PositionPO::getUserId, dto.getUserId())
@@ -93,13 +94,13 @@ public class CompanyController {
 
         List<PositionPO> records = page.getRecords();
 
-        return ResultVO.ok().setData(records);
+        return ResultVO.ok().setData(new PageInfoVO<>(page.getTotal(), records));
     }
 
     @ApiOperation(value = "查询求职者")
     @PostMapping("queryJobSeekers")
     @ApiOperationSupport(includeParameters = {"dto.intendedPosition", "dto.intendedPlaceOfWork", "dto.salaryExpectation", "dto.pageNum", "dto.pageSize"})
-    public ResultVO<List<UserVO>> queryJobSeekers(@RequestBody JobSeekersDTO dto) {
+    public ResultVO<PageInfoVO<UserVO>> queryJobSeekers(@RequestBody JobSeekersDTO dto) {
 
         LambdaQueryWrapper<JobSeekersPO> wrapper = Wrappers.lambdaQuery(JobSeekersPO.class);
         wrapper.like(!StringUtils.isEmpty(dto.getIntendedPosition()), JobSeekersPO::getIntendedPosition, dto.getIntendedPosition())
@@ -125,7 +126,7 @@ public class CompanyController {
         List<UserVO> userVOS = UserConverter.INSTANCE.convertToVO(userPOS);
         userVOS.forEach(t -> t.setPhoneNum(null));
 
-        return ResultVO.ok().setData(userVOS);
+        return ResultVO.ok().setData(new PageInfoVO<>(page.getTotal(), userVOS));
     }
 
 

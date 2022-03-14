@@ -99,7 +99,7 @@ public class ManagerController {
     @ApiOperation(value = "查询管理员")
     @PostMapping("queryManager")
     @ApiOperationSupport(includeParameters = {"dto.nickName", "dto.sex", "dto.pageNum", "dto.pageSize"})
-    public ResultVO<List<UserVO>> queryManager(@RequestBody UserDTO dto) {
+    public ResultVO<PageInfoVO<UserVO>> queryManager(@RequestBody UserDTO dto) {
 
         Page<UserPO> page = userService.page(new Page<>(dto.getPageNum(), dto.getPageSize()), Wrappers.lambdaQuery(UserPO.class)
                 .like(!StringUtils.isEmpty(dto.getNickName()), UserPO::getNickName, dto.getNickName())
@@ -110,7 +110,7 @@ public class ManagerController {
 
         List<UserVO> userVOS = UserConverter.INSTANCE.convertToVO(userPOS);
 
-        return ResultVO.ok().setData(userVOS);
+        return ResultVO.ok().setData(new PageInfoVO<>(page.getTotal(), userVOS));
     }
 
 
@@ -218,14 +218,14 @@ public class ManagerController {
     @ApiOperation(value = "查询公司")
     @PostMapping("queryCompany")
     @ApiOperationSupport(includeParameters = {"dto.companyName", "dto.pageNum", "dto.pageSize"})
-    public ResultVO<List<CompanyPO>> queryCompany(@RequestBody CompanyDTO dto) {
+    public ResultVO<PageInfoVO<CompanyPO>> queryCompany(@RequestBody CompanyDTO dto) {
 
         Page<CompanyPO> page = companyService.page(new Page<>(dto.getPageNum(), dto.getPageSize()), Wrappers.lambdaQuery(CompanyPO.class)
                 .like(!StringUtils.isEmpty(dto.getCompanyName()), CompanyPO::getCompanyName, dto.getCompanyName()));
 
         List<CompanyPO> companyPOS = page.getRecords();
 
-        return ResultVO.ok().setData(companyPOS);
+        return ResultVO.ok().setData(new PageInfoVO<>(page.getTotal(), companyPOS));
     }
 
     @ApiOperation(value = "新增公司用户")
@@ -276,7 +276,7 @@ public class ManagerController {
     @ApiOperation(value = "查询公司用户")
     @PostMapping("queryCompanyUser")
     @ApiOperationSupport(includeParameters = {"dto.companyName", "dto.nickName", "dto.sex", "dto.pageNum", "dto.pageSize"})
-    public ResultVO<List<CompanyUserVO>> queryCompanyUser(@RequestBody CompanyUserDTO dto) {
+    public ResultVO<PageInfoVO<CompanyUserVO>> queryCompanyUser(@RequestBody CompanyUserDTO dto) {
 
         List<Long> companyIds = null;
         if (!StringUtils.isEmpty(dto.getCompanyName())) {
@@ -300,7 +300,6 @@ public class ManagerController {
                 .like(!StringUtils.isEmpty(dto.getNickName()), UserPO::getNickName, dto.getNickName())
                 .eq(dto.getSex() != null, UserPO::getSex, dto.getSex())
                 .eq(UserPO::getRole, UserConstant.ROLE_COMPANY));
-
 
         List<UserPO> userPOS = page.getRecords();
         List<Long> userIdList = null;
@@ -338,7 +337,7 @@ public class ManagerController {
             t.setCompanyDetail(finalCompanyDetailMap.get(finalUserCompanyMap.get(t.getUserId())));
         });
 
-        return ResultVO.ok().setData(companyUserVOS);
+        return ResultVO.ok().setData(new PageInfoVO<>(page.getTotal(), companyUserVOS));
     }
 
     @ApiOperation(value = "新增岗位")
@@ -375,7 +374,7 @@ public class ManagerController {
     @ApiOperation(value = "查询岗位")
     @PostMapping("queryPosition")
     @ApiOperationSupport(ignoreParameters = {"dto.userId", "dto.positionId", "dto.positionIds"})
-    public ResultVO<List<PositionVO>> queryPosition(@RequestBody PositionDTO dto) {
+    public ResultVO<PageInfoVO<PositionVO>> queryPosition(@RequestBody PositionDTO dto) {
 
         List<CompanyPO> companyPOList = companyService.list();
         Map<Long, String> companyNameMap = companyPOList.stream().collect(Collectors.toMap(CompanyPO::getCompanyId, CompanyPO::getCompanyName));
@@ -426,6 +425,6 @@ public class ManagerController {
             positionVOS.add(positionVO);
         }
 
-        return ResultVO.ok().setData(positionVOS);
+        return ResultVO.ok().setData(new PageInfoVO<>(page.getTotal(), positionVOS));
     }
 }

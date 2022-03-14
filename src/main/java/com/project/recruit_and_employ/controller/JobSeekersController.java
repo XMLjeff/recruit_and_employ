@@ -13,6 +13,7 @@ import com.project.recruit_and_employ.mapstruct.JobSeekersConverter;
 import com.project.recruit_and_employ.pojo.*;
 import com.project.recruit_and_employ.service.*;
 import com.project.recruit_and_employ.utils.UploadFile;
+import com.project.recruit_and_employ.vo.PageInfoVO;
 import com.project.recruit_and_employ.vo.PositionVO;
 import com.project.recruit_and_employ.vo.ResultVO;
 import io.swagger.annotations.Api;
@@ -91,7 +92,7 @@ public class JobSeekersController {
     @ApiOperation(value = "推荐岗位")
     @PostMapping("recommendPosition")
     @ApiOperationSupport(includeParameters = {"dto.userId", "dto.pageNum", "dto.pageSize"})
-    public ResultVO<List<PositionVO>> recommendPosition(@RequestBody JobSeekersDTO dto) {
+    public ResultVO<PageInfoVO<PositionVO>> recommendPosition(@RequestBody JobSeekersDTO dto) {
 
         List<CompanyPO> companyPOS = companyService.list();
         Map<Long, String> companyNameMap = companyPOS.stream().collect(Collectors.toMap(CompanyPO::getCompanyId, CompanyPO::getCompanyName));
@@ -129,13 +130,13 @@ public class JobSeekersController {
             positionVOS.add(positionVO);
         }
 
-        return ResultVO.ok().setData(positionVOS);
+        return ResultVO.ok().setData(new PageInfoVO<>(page.getTotal(), positionVOS));
     }
 
     @ApiOperation(value = "招聘信息查询")
     @PostMapping("recruitInfo")
     @ApiOperationSupport(ignoreParameters = {"dto.userId", "dto.positionId", "dto.positionIds"})
-    public ResultVO<List<PositionVO>> recruitInfo(@RequestBody PositionDTO dto) {
+    public ResultVO<PageInfoVO<PositionVO>> recruitInfo(@RequestBody PositionDTO dto) {
 
         List<CompanyPO> companyPOList = companyService.list();
         Map<Long, String> companyNameMap = companyPOList.stream().collect(Collectors.toMap(CompanyPO::getCompanyId, CompanyPO::getCompanyName));
@@ -185,7 +186,7 @@ public class JobSeekersController {
             positionVOS.add(positionVO);
         }
 
-        return ResultVO.ok().setData(positionVOS);
+        return ResultVO.ok().setData(new PageInfoVO<>(page.getTotal(), positionVOS));
     }
 
     @ApiOperation(value = "简历上传")
