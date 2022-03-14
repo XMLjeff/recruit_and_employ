@@ -119,6 +119,11 @@ public class ManagerController {
     @ApiOperationSupport(ignoreParameters = {"dto.userIds", "dto.userId", "dto.pageNum", "dto.pageSize"})
     public ResultVO insertJobSeekers(@RequestBody MaJobSeekersDTO dto) {
 
+        UserPO user = userService.getOne(Wrappers.lambdaQuery(UserPO.class).eq(UserPO::getUserName, dto.getUserName()));
+        if (user != null) {
+            return new ResultVO(MessageEnum.USER_EXIST);
+        }
+
         UserPO userPO = UserConverter.INSTANCE.convertToPO(dto);
         userPO.setRole(UserConstant.ROLE_JOB_SEEKERS);
         userPO.setPassword(DigestUtils.md5DigestAsHex(UserConstant.DEFAULT_PASSWORD.getBytes()));
