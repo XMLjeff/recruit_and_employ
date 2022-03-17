@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.project.recruit_and_employ.dto.JobSeekersDTO;
 import com.project.recruit_and_employ.dto.PositionDTO;
+import com.project.recruit_and_employ.mapstruct.JobSeekersConverter;
 import com.project.recruit_and_employ.mapstruct.PositionConverter;
 import com.project.recruit_and_employ.mapstruct.UserConverter;
 import com.project.recruit_and_employ.pojo.*;
@@ -13,6 +14,7 @@ import com.project.recruit_and_employ.service.ICompanyUserService;
 import com.project.recruit_and_employ.service.IJobSeekersService;
 import com.project.recruit_and_employ.service.IPositionService;
 import com.project.recruit_and_employ.service.IUserService;
+import com.project.recruit_and_employ.vo.JobSeekersVO;
 import com.project.recruit_and_employ.vo.PageInfoVO;
 import com.project.recruit_and_employ.vo.ResultVO;
 import com.project.recruit_and_employ.vo.UserVO;
@@ -27,7 +29,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -100,7 +104,7 @@ public class CompanyController {
     @ApiOperation(value = "查询求职者")
     @PostMapping("queryJobSeekers")
     @ApiOperationSupport(includeParameters = {"dto.intendedPosition", "dto.intendedPlaceOfWork", "dto.salaryExpectation", "dto.pageNum", "dto.pageSize"})
-    public ResultVO<PageInfoVO<UserVO>> queryJobSeekers(@RequestBody JobSeekersDTO dto) {
+    public ResultVO<PageInfoVO<JobSeekersVO>> queryJobSeekers(@RequestBody JobSeekersDTO dto) {
 
         LambdaQueryWrapper<JobSeekersPO> wrapper = Wrappers.lambdaQuery(JobSeekersPO.class);
         wrapper.like(!StringUtils.isEmpty(dto.getIntendedPosition()), JobSeekersPO::getIntendedPosition, dto.getIntendedPosition())
@@ -113,21 +117,24 @@ public class CompanyController {
         Page<JobSeekersPO> page = jobSeekersService.page(new Page<>(dto.getPageNum(), dto.getPageSize()), wrapper);
 
         List<JobSeekersPO> records = page.getRecords();
+
+        List<JobSeekersVO> jobSeekersVOS = new ArrayList<>();
         List<Long> userIds = null;
         if (!CollectionUtils.isEmpty(records)) {
             userIds = records.stream().map(t -> t.getUserId()).collect(Collectors.toList());
+            jobSeekersVOS = JobSeekersConverter.INSTANCE.convertToVO(records);
+            List<UserPO> userPOS = userService.list(Wrappers.lambdaQuery(UserPO.class).in(UserPO::getUserId, userIds));
+            Map<Long, String> userNameMap = userPOS.stream().collect(Collectors.toMap(UserPO::getUserId, UserPO::getUserName));
+            Map<Long, String> nickNameMap = userPOS.stream().collect(Collectors.toMap(UserPO::getUserId, UserPO::getNickName));
+            Map<Long, Integer> sexMap = userPOS.stream().collect(Collectors.toMap(UserPO::getUserId, UserPO::getSex));
+            jobSeekersVOS.forEach(t -> {
+                t.setSex(sexMap.get(t.getUserId()));
+                t.setNickName(nickNameMap.get(t.getUserId()));
+                t.setUserName(userNameMap.get(t.getUserId()));
+            });
         }
 
-        List<UserPO> userPOS = null;
-        if (!CollectionUtils.isEmpty(userIds)) {
-            userPOS = userService.list(Wrappers.lambdaQuery(UserPO.class).in(UserPO::getUserId, userIds));
-        }
-
-        List<UserVO> userVOS = UserConverter.INSTANCE.convertToVO(userPOS);
-        userVOS.forEach(t -> t.setPhoneNum(null));
-
-        return ResultVO.ok().setData(new PageInfoVO<>(page.getTotal(), userVOS));
+        return ResultVO.ok().setData(new PageInfoVO<>(page.getTotal(), jobSeekersVOS));
     }
-
 
 }

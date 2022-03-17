@@ -4,11 +4,8 @@ import io.swagger.annotations.ApiModel;
 
 import java.math.BigDecimal;
 import java.time.*;
-
 import lombok.Data;
-
 import java.io.Serializable;
-
 import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -18,7 +15,7 @@ import io.swagger.annotations.ApiModelProperty;
  * </p>
  *
  * @author xmljeff
- * @since 2022-03-08
+ * @since 2022-03-17
  */
 
 @TableName("position")
@@ -26,7 +23,7 @@ import io.swagger.annotations.ApiModelProperty;
 public class PositionPO implements Serializable {
     private static final Long serialVersionUID = 1L;
 
-    /**
+/**
      * 岗位id
      */
     @ApiModelProperty(value = "岗位id")
@@ -69,5 +66,35 @@ public class PositionPO implements Serializable {
      */
     @ApiModelProperty(value = "招聘人的id")
     private Long userId;
-
+    /**
+     * 工作经验要求
+     */
+    @ApiModelProperty(value = "工作经验要求")
+    private String workExperience;
+    /**
+     * 学历要求
+     */
+    @ApiModelProperty(value = "学历要求")
+    private String education;
+    /**
+     * 岗位职责
+     */
+    @ApiModelProperty(value = "岗位职责")
+    private String jobResponsibility;
+    /**
+     * 任职要求
+     */
+    @ApiModelProperty(value = "任职要求")
+    private String jobRequirement;
+    /**
+     * 职位福利
+     */
+    @ApiModelProperty(value = "职位福利")
+    private String positionBenefits;
+    /**
+     * 工作年限
+     */
+    @ApiModelProperty(value = "工作年限")
+    private Integer workingYears;
+    
 }

@@ -150,7 +150,12 @@ public class ManagerController {
                 .set(dto.getSalaryExpectation() != null, JobSeekersPO::getSalaryExpectation, dto.getSalaryExpectation())
                 .set(!StringUtils.isEmpty(dto.getScholarshipInfo()), JobSeekersPO::getScholarshipInfo, dto.getScholarshipInfo())
                 .set(!StringUtils.isEmpty(dto.getIntroduction()), JobSeekersPO::getIntroduction, dto.getIntroduction())
-                .set(!StringUtils.isEmpty(dto.getResumeUrl()), JobSeekersPO::getResumeUrl, dto.getResumeUrl()));
+                .set(!StringUtils.isEmpty(dto.getResumeUrl()), JobSeekersPO::getResumeUrl, dto.getResumeUrl())
+                .set(!StringUtils.isEmpty(dto.getWorkExperience()), JobSeekersPO::getWorkExperience, dto.getWorkExperience())
+                .set(!StringUtils.isEmpty(dto.getUniversity()), JobSeekersPO::getUniversity, dto.getUniversity())
+                .set(!StringUtils.isEmpty(dto.getMajor()), JobSeekersPO::getMajor, dto.getMajor())
+                .set(!StringUtils.isEmpty(dto.getProfessionalSkill()), JobSeekersPO::getProfessionalSkill, dto.getProfessionalSkill())
+                .set(dto.getGraduationTime() != null, JobSeekersPO::getGraduationTime, dto.getGraduationTime()));
 
         return ResultVO.ok();
     }
@@ -383,7 +388,7 @@ public class ManagerController {
 
     @ApiOperation(value = "查询岗位")
     @PostMapping("queryPosition")
-    @ApiOperationSupport(ignoreParameters = {"dto.userId", "dto.positionId", "dto.positionIds"})
+    @ApiOperationSupport(ignoreParameters = {"dto.userId", "dto.positionId", "dto.positionIds", "dto.positionDetail", "dto.jobResponsibility", "dto.jobRequirement", "dto.positionBenefits", "dto.workExperience"})
     public ResultVO<PageInfoVO<PositionVO>> queryPosition(@RequestBody PositionDTO dto) {
 
         List<CompanyPO> companyPOList = companyService.list();
@@ -407,7 +412,9 @@ public class ManagerController {
         wrapper.like(!StringUtils.isEmpty(dto.getPositionName()), PositionPO::getPositionName, dto.getPositionName())
                 .eq(dto.getPositionCategory() != null, PositionPO::getPositionCategory, dto.getPositionCategory())
                 .in(!CollectionUtils.isEmpty(collect), PositionPO::getCompanyId, collect)
-                .ge(dto.getPositionSalary() != null, PositionPO::getPositionSalary, dto.getPositionSalary());
+                .ge(dto.getPositionSalary() != null, PositionPO::getPositionSalary, dto.getPositionSalary())
+                .eq(!StringUtils.isEmpty(dto.getEducation()), PositionPO::getEducation, dto.getEducation())
+                .eq(dto.getWorkingYears() != null, PositionPO::getWorkingYears, dto.getWorkingYears());
         if (dto.getPositionSalary() != null) {
             wrapper.le(PositionPO::getPositionSalary, dto.getPositionSalary().add(new BigDecimal(2000)));
         }
@@ -432,6 +439,12 @@ public class ManagerController {
             positionVO.setPositionName(positionPO.getPositionName());
             positionVO.setPositionSalary(positionPO.getPositionSalary());
             positionVO.setSex(sexMap.get(positionPO.getUserId()));
+            positionVO.setWorkExperience(positionPO.getWorkExperience());
+            positionVO.setEducation(positionPO.getEducation());
+            positionVO.setJobResponsibility(positionPO.getJobResponsibility());
+            positionVO.setJobRequirement(positionPO.getJobRequirement());
+            positionVO.setPositionBenefits(positionPO.getPositionBenefits());
+            positionVO.setWorkingYears(positionPO.getWorkingYears());
             positionVOS.add(positionVO);
         }
 

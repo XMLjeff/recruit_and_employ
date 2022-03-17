@@ -79,7 +79,12 @@ public class JobSeekersController {
                     .set(dto.getSalaryExpectation() != null, JobSeekersPO::getSalaryExpectation, dto.getSalaryExpectation())
                     .set(!StringUtils.isEmpty(dto.getScholarshipInfo()), JobSeekersPO::getScholarshipInfo, dto.getScholarshipInfo())
                     .set(!StringUtils.isEmpty(dto.getIntroduction()), JobSeekersPO::getIntroduction, dto.getIntroduction())
-                    .set(!StringUtils.isEmpty(dto.getResumeUrl()), JobSeekersPO::getResumeUrl, dto.getResumeUrl()));
+                    .set(!StringUtils.isEmpty(dto.getResumeUrl()), JobSeekersPO::getResumeUrl, dto.getResumeUrl())
+                    .set(!StringUtils.isEmpty(dto.getWorkExperience()), JobSeekersPO::getWorkExperience, dto.getWorkExperience())
+                    .set(!StringUtils.isEmpty(dto.getUniversity()), JobSeekersPO::getUniversity, dto.getUniversity())
+                    .set(!StringUtils.isEmpty(dto.getMajor()), JobSeekersPO::getMajor, dto.getMajor())
+                    .set(!StringUtils.isEmpty(dto.getProfessionalSkill()), JobSeekersPO::getProfessionalSkill, dto.getProfessionalSkill())
+                    .set(dto.getGraduationTime() != null, JobSeekersPO::getGraduationTime, dto.getGraduationTime()));
         }
 
         return ResultVO.ok();
@@ -135,6 +140,12 @@ public class JobSeekersController {
             positionVO.setPositionName(positionPO.getPositionName());
             positionVO.setPositionSalary(positionPO.getPositionSalary());
             positionVO.setSex(sexMap.get(positionPO.getUserId()));
+            positionVO.setWorkExperience(positionPO.getWorkExperience());
+            positionVO.setEducation(positionPO.getEducation());
+            positionVO.setJobResponsibility(positionPO.getJobResponsibility());
+            positionVO.setJobRequirement(positionPO.getJobRequirement());
+            positionVO.setPositionBenefits(positionPO.getPositionBenefits());
+            positionVO.setWorkingYears(positionPO.getWorkingYears());
             positionVOS.add(positionVO);
         }
 
@@ -191,6 +202,12 @@ public class JobSeekersController {
             positionVO.setPositionName(positionPO.getPositionName());
             positionVO.setPositionSalary(positionPO.getPositionSalary());
             positionVO.setSex(sexMap.get(positionPO.getUserId()));
+            positionVO.setWorkExperience(positionPO.getWorkExperience());
+            positionVO.setEducation(positionPO.getEducation());
+            positionVO.setJobResponsibility(positionPO.getJobResponsibility());
+            positionVO.setJobRequirement(positionPO.getJobRequirement());
+            positionVO.setPositionBenefits(positionPO.getPositionBenefits());
+            positionVO.setWorkingYears(positionPO.getWorkingYears());
             positionVOS.add(positionVO);
         }
 

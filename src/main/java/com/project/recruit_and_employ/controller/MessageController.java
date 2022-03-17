@@ -1,11 +1,12 @@
 package com.project.recruit_and_employ.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import com.project.recruit_and_employ.constant.UserConstant;
 import com.project.recruit_and_employ.dto.UserDTO;
-import com.project.recruit_and_employ.pojo.MessagePO;
-import com.project.recruit_and_employ.pojo.UserPO;
+import com.project.recruit_and_employ.pojo.*;
 import com.project.recruit_and_employ.service.*;
 import com.project.recruit_and_employ.vo.ChartVO;
 import com.project.recruit_and_employ.vo.MessageVO;
@@ -38,6 +39,12 @@ public class MessageController {
     private IUserService userService;
     @Autowired
     private IMessageService messageService;
+    @Autowired
+    private ICompanyUserService companyUserService;
+    @Autowired
+    private ICompanyService companyService;
+    @Autowired
+    private IJobSeekersService jobSeekersService;
 
     @ApiOperation(value = "留言")
     @PostMapping("leaveMessage")
@@ -140,6 +147,41 @@ public class MessageController {
             chartVO.setUserId(messagePO.getSenderId());
             chartVO.setNickName(nickNameMap.get(messagePO.getSenderId()));
             chartVOS.add(chartVO);
+        }
+
+        if (!CollectionUtils.isEmpty(chartVOS)) {
+            List<Long> userIds = chartVOS.stream().map(t -> t.getUserId()).collect(Collectors.toList());
+            Map<Long, Integer> sexMap = userService.list(Wrappers.lambdaQuery(UserPO.class).in(UserPO::getUserId, userIds))
+                    .stream().collect(Collectors.toMap(UserPO::getUserId, UserPO::getSex));
+            UserPO userPO = userService.getById(chartVOS.get(0).getUserId());
+            //如果是公司，加入公司信息
+            if (UserConstant.ROLE_COMPANY.equals(userPO.getRole())) {
+                List<CompanyUserPO> companyUserPOS = companyUserService.list(Wrappers.lambdaQuery(CompanyUserPO.class).in(CompanyUserPO::getUserId, userIds));
+                Map<Long, Long> companyUserMap = companyUserPOS.stream().collect(Collectors.toMap(CompanyUserPO::getUserId, CompanyUserPO::getCompanyId));
+                List<Long> companyIds = companyUserPOS.stream().map(t -> t.getCompanyId()).collect(Collectors.toList());
+                List<CompanyPO> companyPOS = companyService.list(Wrappers.lambdaQuery(CompanyPO.class).in(CompanyPO::getCompanyId, companyIds));
+                Map<Long, String> companyNameMap = companyPOS.stream().collect(Collectors.toMap(CompanyPO::getCompanyId, CompanyPO::getCompanyName));
+                Map<Long, String> companyDetailMap = companyPOS.stream().collect(Collectors.toMap(CompanyPO::getCompanyId, CompanyPO::getCompanyDetail));
+                chartVOS.forEach(t -> {
+                    t.setSex(sexMap.get(t.getUserId()));
+                    t.setCompanyName(companyNameMap.get(companyUserMap.get(t.getUserId())));
+                    t.setCompanyDetail(companyDetailMap.get(companyUserMap.get(t.getUserId())));
+                });
+            }
+
+            //如果是求职者，加入求职者信息
+            if (UserConstant.ROLE_JOB_SEEKERS.equals(userPO.getRole())) {
+                List<JobSeekersPO> jobSeekersPOS = jobSeekersService.list(Wrappers.lambdaQuery(JobSeekersPO.class).in(JobSeekersPO::getUserId, userIds));
+                Map<Long, String> universityMap = jobSeekersPOS.stream().collect(Collectors.toMap(JobSeekersPO::getUserId, JobSeekersPO::getUniversity));
+                Map<Long, String> majorMap = jobSeekersPOS.stream().collect(Collectors.toMap(JobSeekersPO::getUserId, JobSeekersPO::getMajor));
+                Map<Long, String> intendedPositionMap = jobSeekersPOS.stream().collect(Collectors.toMap(JobSeekersPO::getUserId, JobSeekersPO::getIntendedPosition));
+                chartVOS.forEach(t -> {
+                    t.setSex(sexMap.get(t.getUserId()));
+                    t.setUniversity(universityMap.get(t.getUserId()));
+                    t.setMajor(majorMap.get(t.getUserId()));
+                    t.setIntendedPosition(intendedPositionMap.get(t.getUserId()));
+                });
+            }
         }
 
         return ResultVO.ok().setData(chartVOS);

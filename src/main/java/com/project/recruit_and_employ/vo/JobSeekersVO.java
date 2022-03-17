@@ -1,27 +1,21 @@
-package com.project.recruit_and_employ.dto;
+package com.project.recruit_and_employ.vo;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 
 /**
  * @author ：xmljeff
- * @date ：Created in 2022/3/10 21:54
+ * @date ：Created in 2022/3/17 20:32
  * @description：
  * @modified By：
  * @version: $
  */
 @Data
-public class MaJobSeekersDTO {
+public class JobSeekersVO {
 
-    /**
-     * 用户ids
-     */
-    @ApiModelProperty(value = "用户ids")
-    private List<Long> userIds;
     /**
      * 用户id
      */
@@ -42,11 +36,6 @@ public class MaJobSeekersDTO {
      */
     @ApiModelProperty(value = "性别：0：男；1：女，2：未知")
     private Integer sex;
-    /**
-     * 电话号码
-     */
-    @ApiModelProperty(value = "电话号码")
-    private Long phoneNum;
     /**
      * 意向岗位
      */
@@ -73,11 +62,6 @@ public class MaJobSeekersDTO {
     @ApiModelProperty(value = "个人介绍")
     private String introduction;
     /**
-     * 简历url
-     */
-    @ApiModelProperty(value = "简历url")
-    private String resumeUrl;
-    /**
      * 工作经历
      */
     @ApiModelProperty(value = "工作经历")
@@ -102,10 +86,4 @@ public class MaJobSeekersDTO {
      */
     @ApiModelProperty(value = "专业技能")
     private String professionalSkill;
-
-    @ApiModelProperty(value = "页码", example = "1", notes = "必填")
-    private Integer pageNum;
-
-    @ApiModelProperty(value = "每页条数", example = "10", notes = "必填")
-    private Integer pageSize;
 }

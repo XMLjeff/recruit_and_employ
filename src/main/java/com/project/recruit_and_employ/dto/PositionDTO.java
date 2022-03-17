@@ -63,6 +63,36 @@ public class PositionDTO {
      */
     @ApiModelProperty(value = "岗位详情")
     private String positionDetail;
+    /**
+     * 工作经验要求
+     */
+    @ApiModelProperty(value = "工作经验要求")
+    private String workExperience;
+    /**
+     * 学历要求
+     */
+    @ApiModelProperty(value = "学历要求")
+    private String education;
+    /**
+     * 岗位职责
+     */
+    @ApiModelProperty(value = "岗位职责")
+    private String jobResponsibility;
+    /**
+     * 任职要求
+     */
+    @ApiModelProperty(value = "任职要求")
+    private String jobRequirement;
+    /**
+     * 职位福利
+     */
+    @ApiModelProperty(value = "职位福利")
+    private String positionBenefits;
+    /**
+     * 工作年限
+     */
+    @ApiModelProperty(value = "工作年限")
+    private Integer workingYears;
 
     @ApiModelProperty(value = "页码", example = "1", notes = "必填")
     private Integer pageNum;

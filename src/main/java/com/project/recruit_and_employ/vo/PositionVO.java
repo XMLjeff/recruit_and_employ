@@ -72,4 +72,34 @@ public class PositionVO {
      */
     @ApiModelProperty(value = "性别：0：男；1：女，2：未知")
     private Integer sex;
+    /**
+     * 工作经验要求
+     */
+    @ApiModelProperty(value = "工作经验要求")
+    private String workExperience;
+    /**
+     * 学历要求
+     */
+    @ApiModelProperty(value = "学历要求")
+    private String education;
+    /**
+     * 岗位职责
+     */
+    @ApiModelProperty(value = "岗位职责")
+    private String jobResponsibility;
+    /**
+     * 任职要求
+     */
+    @ApiModelProperty(value = "任职要求")
+    private String jobRequirement;
+    /**
+     * 职位福利
+     */
+    @ApiModelProperty(value = "职位福利")
+    private String positionBenefits;
+    /**
+     * 工作年限
+     */
+    @ApiModelProperty(value = "工作年限")
+    private Integer workingYears;
 }

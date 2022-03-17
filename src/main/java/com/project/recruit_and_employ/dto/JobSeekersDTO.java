@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 /**
  * @author ：xmljeff
@@ -51,6 +52,31 @@ public class JobSeekersDTO implements Serializable {
      */
     @ApiModelProperty(value = "简历url")
     private String resumeUrl;
+    /**
+     * 工作经历
+     */
+    @ApiModelProperty(value = "工作经历")
+    private String workExperience;
+    /**
+     * 毕业时间
+     */
+    @ApiModelProperty(value = "毕业时间")
+    private LocalDate graduationTime;
+    /**
+     * 院校
+     */
+    @ApiModelProperty(value = "院校")
+    private String university;
+    /**
+     * 专业
+     */
+    @ApiModelProperty(value = "专业")
+    private String major;
+    /**
+     * 专业技能
+     */
+    @ApiModelProperty(value = "专业技能")
+    private String professionalSkill;
 
     @ApiModelProperty(value = "页码", example = "1", notes = "必填")
     private Integer pageNum;

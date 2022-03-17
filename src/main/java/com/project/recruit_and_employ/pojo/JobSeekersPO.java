@@ -4,11 +4,8 @@ import io.swagger.annotations.ApiModel;
 
 import java.math.BigDecimal;
 import java.time.*;
-
 import lombok.Data;
-
 import java.io.Serializable;
-
 import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -18,7 +15,7 @@ import io.swagger.annotations.ApiModelProperty;
  * </p>
  *
  * @author xmljeff
- * @since 2022-03-08
+ * @since 2022-03-17
  */
 
 @TableName("job_seekers")
@@ -26,10 +23,13 @@ import io.swagger.annotations.ApiModelProperty;
 public class JobSeekersPO implements Serializable {
     private static final Long serialVersionUID = 1L;
 
-    /**
+/**
      * 用户id（主键）
      */
     @ApiModelProperty(value = "用户id（主键）")
+    //@TableId(value = "user_id", type = IdType.ID_WORKER)
+    //private Long id;//如果是Long类型的主键.则需要IdType.ID_WORKER;它会自动使用雪花算法生成不重复的ID.在新增的时候.自动赋值
+    @TableId(type = IdType.AUTO)
     private Long userId;
     /**
      * 意向岗位
@@ -61,5 +61,30 @@ public class JobSeekersPO implements Serializable {
      */
     @ApiModelProperty(value = "简历url")
     private String resumeUrl;
-
+    /**
+     * 工作经历
+     */
+    @ApiModelProperty(value = "工作经历")
+    private String workExperience;
+    /**
+     * 毕业时间
+     */
+    @ApiModelProperty(value = "毕业时间")
+    private LocalDate graduationTime;
+    /**
+     * 院校
+     */
+    @ApiModelProperty(value = "院校")
+    private String university;
+    /**
+     * 专业
+     */
+    @ApiModelProperty(value = "专业")
+    private String major;
+    /**
+     * 专业技能
+     */
+    @ApiModelProperty(value = "专业技能")
+    private String professionalSkill;
+    
 }
