@@ -141,7 +141,7 @@ public class JobSeekersController {
 
     @ApiOperation(value = "招聘信息查询")
     @PostMapping("recruitInfo")
-    @ApiOperationSupport(ignoreParameters = {"dto.userId", "dto.positionId", "dto.positionIds"})
+    @ApiOperationSupport(ignoreParameters = {"dto.userId", "dto.positionId", "dto.positionIds","dto.positionDetail"})
     public ResultVO<PageInfoVO<PositionVO>> recruitInfo(@RequestBody PositionDTO dto) {
 
         List<CompanyPO> companyPOList = companyService.list();

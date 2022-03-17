@@ -58,6 +58,11 @@ public class PositionDTO {
      */
     @ApiModelProperty(value = "工作地点")
     private String placeOfWork;
+    /**
+     * 岗位详情
+     */
+    @ApiModelProperty(value = "岗位详情")
+    private String positionDetail;
 
     @ApiModelProperty(value = "页码", example = "1", notes = "必填")
     private Integer pageNum;
