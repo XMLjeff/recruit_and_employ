@@ -112,7 +112,9 @@ public class JobSeekersController {
 
         Page<PositionPO> page = positionService.page(new Page<>(dto.getPageNum(), dto.getPageSize()), Wrappers.lambdaQuery(PositionPO.class)
                 .like(PositionPO::getPlaceOfWork, jobSeekersPO.getIntendedPlaceOfWork())
+                .or()
                 .like(PositionPO::getPositionName, jobSeekersPO.getIntendedPosition())
+                .or()
                 .ge(PositionPO::getPositionSalary, jobSeekersPO.getSalaryExpectation())
                 .le(PositionPO::getPositionSalary, jobSeekersPO.getSalaryExpectation().add(new BigDecimal(2000))));
 
@@ -141,7 +143,7 @@ public class JobSeekersController {
 
     @ApiOperation(value = "招聘信息查询")
     @PostMapping("recruitInfo")
-    @ApiOperationSupport(ignoreParameters = {"dto.userId", "dto.positionId", "dto.positionIds","dto.positionDetail"})
+    @ApiOperationSupport(ignoreParameters = {"dto.userId", "dto.positionId", "dto.positionIds", "dto.positionDetail"})
     public ResultVO<PageInfoVO<PositionVO>> recruitInfo(@RequestBody PositionDTO dto) {
 
         List<CompanyPO> companyPOList = companyService.list();
