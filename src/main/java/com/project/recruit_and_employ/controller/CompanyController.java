@@ -14,10 +14,7 @@ import com.project.recruit_and_employ.service.ICompanyUserService;
 import com.project.recruit_and_employ.service.IJobSeekersService;
 import com.project.recruit_and_employ.service.IPositionService;
 import com.project.recruit_and_employ.service.IUserService;
-import com.project.recruit_and_employ.vo.JobSeekersVO;
-import com.project.recruit_and_employ.vo.PageInfoVO;
-import com.project.recruit_and_employ.vo.ResultVO;
-import com.project.recruit_and_employ.vo.UserVO;
+import com.project.recruit_and_employ.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -137,4 +134,34 @@ public class CompanyController {
         return ResultVO.ok().setData(new PageInfoVO<>(page.getTotal(), jobSeekersVOS));
     }
 
+    @ApiOperation(value = "推荐求职者")
+    @PostMapping("recommendJobSeekers")
+    @ApiOperationSupport(includeParameters = {"dto.userId", "dto.pageNum", "dto.pageSize"})
+    public ResultVO<List<JobSeekersVO>> recommendJobSeekers(@RequestBody JobSeekersDTO dto) {
+
+        List<PositionPO> positionPOS = positionService.list(Wrappers.lambdaQuery(PositionPO.class).eq(PositionPO::getUserId, dto.getUserId()));
+        List<JobSeekersPO> jobSeekersPOSList = new ArrayList<>();
+        for (PositionPO positionPO : positionPOS) {
+            List<JobSeekersPO> jobSeekersPOS = jobSeekersService.list(Wrappers.lambdaQuery(JobSeekersPO.class).like(JobSeekersPO::getIntendedPosition, positionPO.getPositionName()));
+            jobSeekersPOSList.addAll(jobSeekersPOS);
+        }
+
+        List<JobSeekersVO> jobSeekersVOS = new ArrayList<>();
+        List<Long> userIds = null;
+        if (!CollectionUtils.isEmpty(jobSeekersPOSList)) {
+            userIds = jobSeekersPOSList.stream().map(t -> t.getUserId()).collect(Collectors.toList());
+            jobSeekersVOS = JobSeekersConverter.INSTANCE.convertToVO(jobSeekersPOSList);
+            List<UserPO> userPOS = userService.list(Wrappers.lambdaQuery(UserPO.class).in(UserPO::getUserId, userIds));
+            Map<Long, String> userNameMap = userPOS.stream().collect(Collectors.toMap(UserPO::getUserId, UserPO::getUserName));
+            Map<Long, String> nickNameMap = userPOS.stream().collect(Collectors.toMap(UserPO::getUserId, UserPO::getNickName));
+            Map<Long, Integer> sexMap = userPOS.stream().collect(Collectors.toMap(UserPO::getUserId, UserPO::getSex));
+            jobSeekersVOS.forEach(t -> {
+                t.setSex(sexMap.get(t.getUserId()));
+                t.setNickName(nickNameMap.get(t.getUserId()));
+                t.setUserName(userNameMap.get(t.getUserId()));
+            });
+        }
+
+        return ResultVO.ok().setData(jobSeekersVOS);
+    }
 }
