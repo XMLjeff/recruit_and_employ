@@ -15,7 +15,12 @@
         j.salary_expectation,
         j.scholarship_info,
         j.introduction,
-        j.resume_url
+        j.resume_url,
+        j.work_experience,
+        j.graduation_time,
+        j.university,
+        j.major,
+        j.professional_skill
         FROM
         user u,
         job_seekers j
