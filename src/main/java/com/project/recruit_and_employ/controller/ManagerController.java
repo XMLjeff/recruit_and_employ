@@ -405,6 +405,8 @@ public class ManagerController {
             companyPOS = companyService.list(Wrappers.lambdaQuery(CompanyPO.class).like(CompanyPO::getCompanyName, dto.getCompanyName()));
             if (!CollectionUtils.isEmpty(companyPOS)) {
                 collect = companyPOS.stream().map(t -> t.getCompanyId()).collect(Collectors.toList());
+            } else {
+                return ResultVO.ok().setData(new PageInfoVO<>(0L, null));
             }
         }
 
